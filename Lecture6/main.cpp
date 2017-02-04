@@ -50,8 +50,10 @@ This implements the Midpoint method equation
 */
 double rk2(double y, double h, double x)
 {
+	double k1 = df(x, y);
+
 	// Add midpoint code here !
-    return rk1(y,h,x);
+    return y + h*df(x+h/2, y+ (h/2)*k1);
 }
 
 
@@ -60,8 +62,14 @@ This implements the RK4 method equation
 */
 double rk4(double y, double h, double x)
 {
+	double k1 = df(x, y);
+	double k2 = df(x + (h / 2), y + k1*(h / 2));
+	double k3 = df(x + (h / 2), y + k2* (h / 2));
+	double k4 = df(x + h, y + h*k3);
+
 	// Add RK4 code here!
-    return rk1(y,h,x) ;
+	double y1 = y + 1.0 / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4) * h;
+	return y1;
 }
 
 
@@ -69,32 +77,48 @@ double rk4(double y, double h, double x)
 
 int main()
 {
-
-    double y = M_E;
+	double ye = M_E;
+    double yrk1 = M_E;
+	double yrk2 = M_E;
+	double yrk4 = M_E;
     double x = 2.0;
     double h = 0.1;
 
 
+	
     // Euler Method Test
     //*************************
     // This code reproduces the table: (Euler's Method (Example 1 - Accuracy))
-    
-    std::cout << "x" << "\t" << "y (Euler)" << "\t" << "dy/dx" << "\t\t" << "EXACT" << "\t\t" 
-        << "%Error(Euler)" << std::endl;
-    std::cout << "----" << "\t" << "----------" << "\t" << "----------" << "\t" << "----------" 
-        << "\t" << "----------" << std::endl;
+    std::cout << "dy/dx" << "\t\t" << "EXACT" << "\t\t" << "x" << "\t" 
+		<< "y (Euler)" << "\t" << "%Error(Euler)" << "\t"
+		<< "y (midpoint)" << "\t" << "%Error(midpoint)" << "\t"
+		<< "y (Runge-Kutta)" << "\t" << "%Error(Runge-Kutta)" 
+		<< std::endl;
+    std::cout << "------------" << "\t" << "------" << "\t\t" << "----" << "\t" 
+		<< "------------" << "\t" << "------------" << "\t"
+		<< "------------" << "\t" << "----------------" << "\t"
+		<< "---------------" << "\t" << "------------------"
+		<< std::endl;
 
-    std::cout << x << "\t" << std::setprecision(11) << y << "\t" << std::setprecision(11) 
-        << df(x, y) << "\t" << exact(x) << "\t" << error(exact(x), y) * 100 << "%" << std::endl;
+    std::cout << df(x, ye) << "\t\t" << exact(x) <<"\t\t"<< x << "\t" 
+		<< std::setprecision(11) << yrk1 << "\t" << std::setprecision(11) << error(exact(x), yrk1) * 100 << "%" << "\t\t"
+		<< std::setprecision(11) << yrk2 << "\t" << std::setprecision(11) << error(exact(x), yrk2) * 100 << "%" << "\t\t\t"
+		<< std::setprecision(11) << yrk4 << "\t" << std::setprecision(11) << error(exact(x), yrk4) * 100 << "%"
+		<< std::endl;
 
 
     for (int i = 0; i < 10; i++)
     {
-        y = rk1(y,h,x);  //caculate y_{i+1}
-        x = x + h;       //increment x
+		yrk1 = rk1(yrk1, h, x);  //caculate y_{i+1}
+		yrk2 = rk2(yrk2, h, x);  //caculate y_{i+1}
+		yrk4 = rk4(yrk4, h, x);  //caculate y_{i+1}
+		x = x + h;       //increment x
 
-        std::cout<< x << "\t" << std::setprecision(11) << y <<  "\t" << std::setprecision(11) 
-            << df(x, y) << "\t" <<exact(x)<< "\t" << error(exact(x), y) * 100<<"%" << std::endl;
+        std::cout << df(x, ye) << "\t" << exact(x) << "\t" << x << "\t" 
+			<< std::setprecision(11) << yrk1 << "\t" << std::setprecision(11) << error(exact(x), yrk1) * 100 << "%" << "\t"
+			<< std::setprecision(11) << yrk2 << "\t" << std::setprecision(11) << error(exact(x), yrk2) * 100 << "%" << "  \t"
+			<< std::setprecision(11) << yrk4 << "\t" << std::setprecision(11) << error(exact(x), yrk4) * 100 << "%"
+			<< std::endl;
     }
 
 
