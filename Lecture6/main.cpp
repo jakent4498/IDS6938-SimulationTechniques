@@ -51,7 +51,7 @@ This implements the Midpoint method equation
 double rk2(double y, double h, double x)
 {
 	// Add midpoint code here !
-    return ;
+    return rk1(y,h,x);
 }
 
 
@@ -61,7 +61,7 @@ This implements the RK4 method equation
 double rk4(double y, double h, double x)
 {
 	// Add RK4 code here!
-    return  ;
+    return rk1(y,h,x) ;
 }
 
 
