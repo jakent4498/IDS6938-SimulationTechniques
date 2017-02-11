@@ -5,6 +5,7 @@
 This is the framework for homework #1. Please first read the [homework writeup](HomeWork%231.pdf).
 
 The assignment is due: Monday, February 27 at 11:59PM (EST)
+This file has been edited by Julie A Kent.
 
 | undeformed jello  | deformed jello |
 | ------------- | ------------- |
