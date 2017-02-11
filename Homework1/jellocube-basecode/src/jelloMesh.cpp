@@ -488,11 +488,124 @@ bool JelloMesh::CylinderIntersection(Particle& p, World::Cylinder* cylinder,
 void JelloMesh::EulerIntegrate(double dt)
 {
     // TODO
+	/*
+	This implements the Euler method equation
+
+	double rk1(double y, double h, double x)
+	{
+		return y + h * df(x, y);
+	}
+	*/
+	double halfdt = 0.5 * dt;
+	ParticleGrid target = m_vparticles;  // target is a copy!
+	ParticleGrid& source = m_vparticles;  // source is a ptr!
+
+										  // Step 1
+	ParticleGrid accum1 = m_vparticles;
+	for (int i = 0; i < m_rows + 1; i++)
+	{
+		for (int j = 0; j < m_cols + 1; j++)
+		{
+			for (int k = 0; k < m_stacks + 1; k++)
+			{
+				Particle& s = GetParticle(source, i, j, k);
+
+				Particle& k1 = GetParticle(accum1, i, j, k);
+				k1.force = halfdt * s.force * 1 / s.mass;
+				k1.velocity = halfdt * s.velocity;
+
+				Particle& t = GetParticle(target, i, j, k);
+				t.velocity = s.velocity + k1.force;
+				t.position = s.position + k1.velocity;
+			}
+		}
+	}
+
+	ComputeForces(target);
+
+	// finding ressult
+	double ahalf = 1 / 2.0;
+	for (int i = 0; i < m_rows + 1; i++)
+	{
+		for (int j = 0; j < m_cols + 1; j++)
+		{
+			for (int k = 0; k < m_stacks + 1; k++)
+			{
+				Particle& p = GetParticle(m_vparticles, i, j, k);
+				Particle& k1 = GetParticle(accum1, i, j, k);
+
+				// 				return y + h * df(x, y);
+				p.velocity = p.velocity + k1.force;
+
+
+				p.position = p.position + k1.velocity;
+			}
+		}
+	}
+
 }
 
 void JelloMesh::MidPointIntegrate(double dt)
 {
     // TODO
+	/*
+	This implements the Midpoint method equation
+
+	double rk2(double y, double h, double x)
+	{
+		double k1 = df(x, y);
+
+		// Add midpoint code here !
+		return y + h*df(x + h / 2, y + (h / 2)*k1);
+	}
+	*/
+	double halfdt = 0.5 * dt;
+	ParticleGrid target = m_vparticles;  // target is a copy!
+	ParticleGrid& source = m_vparticles;  // source is a ptr!
+
+										  // Step 1
+	ParticleGrid accum1 = m_vparticles;
+	for (int i = 0; i < m_rows + 1; i++)
+	{
+		for (int j = 0; j < m_cols + 1; j++)
+		{
+			for (int k = 0; k < m_stacks + 1; k++)
+			{
+				Particle& s = GetParticle(source, i, j, k);
+
+				Particle& k1 = GetParticle(accum1, i, j, k);
+				k1.force = halfdt * s.force * 1 / s.mass;
+				k1.velocity = halfdt * s.velocity;
+
+				Particle& t = GetParticle(target, i, j, k);
+				t.velocity = s.velocity + k1.force;
+				t.position = s.position + k1.velocity;
+			}
+		}
+	}
+
+	ComputeForces(target);
+
+	// finding ressult
+	double ahalf = 1 / 2.0;
+	for (int i = 0; i < m_rows + 1; i++)
+	{
+		for (int j = 0; j < m_cols + 1; j++)
+		{
+			for (int k = 0; k < m_stacks + 1; k++)
+			{
+				Particle& p = GetParticle(m_vparticles, i, j, k);
+				Particle& k1 = GetParticle(accum1, i, j, k);
+
+			// 		return y + h*df(x + h / 2, y + (h / 2)*k1);
+				p.velocity = p.velocity + ahalf * k1.force;
+
+
+				p.position = p.position + ahalf * k1.velocity;
+			}
+		}
+	}
+
 }
 
 void JelloMesh::RK4Integrate(double dt)
