@@ -438,6 +438,18 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
         Particle& a = GetParticle(grid, spring.m_p1);
         Particle& b = GetParticle(grid, spring.m_p2);
 
+		vec3& deltaP = a.position - b.position;
+		double dist = deltaP.Length();
+		double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
+
+		vec3 deltaV = a.velocity - b.velocity;
+		double DTerm = Dot(deltaV, deltaP) * spring.m_Kd / dist;
+        
+		deltaP = deltaP / dist;
+		deltaP = deltaP * (-(HTerm + DTerm));
+		a.force += deltaP;
+		b.force -= deltaP;
+
         // TODO
     }
 }
