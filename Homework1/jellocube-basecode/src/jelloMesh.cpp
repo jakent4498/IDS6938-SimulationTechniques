@@ -408,6 +408,7 @@ void JelloMesh::CheckForCollisions(ParticleGrid& grid, const World& world)
                     else if (world.m_shapes[i]->GetType() == World::GROUND && 
                         FloorIntersection(p, intersection))
                     {
+//						std::cout << "I got here" << std::endl;
                         m_vcontacts.push_back(intersection);
                     }
                 }
@@ -476,13 +477,23 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
         float dist = result.m_distance;
 
         // TODO
+		// Try just stopping all forces to see if we can do that
+		pt.force -= pt.force;
+
 	}
 }
 
 bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 {
     // TODO
-    return false;
+	//p.position
+	//if (p.position == intersection.m_p)
+	if (p.position.n[0] == intersection.m_normal.n[0] &&
+		p.position.n[1] == intersection.m_normal.n[1] &&
+		p.position.n[2] == intersection.m_normal.n[2] )
+		return true;
+	else
+		return false;
 }
 
 bool JelloMesh::CylinderIntersection(Particle& p, World::Cylinder* cylinder, 
