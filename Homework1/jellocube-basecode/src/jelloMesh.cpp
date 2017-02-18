@@ -457,6 +457,7 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
 
 void JelloMesh::ResolveContacts(ParticleGrid& grid)
 {
+	
     for (unsigned int i = 0; i < m_vcontacts.size(); i++)
     {
        const Intersection& contact = m_vcontacts[i];
@@ -464,7 +465,10 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
        vec3 normal = contact.m_normal; 
 
         // TODO
+	   p.force -= p.force;
+	   p.velocity.n[1] = 0;
     }
+	/**/
 }
 
 void JelloMesh::ResolveCollisions(ParticleGrid& grid)
@@ -479,6 +483,7 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
         // TODO
 		// Try just stopping all forces to see if we can do that
 		pt.force -= pt.force;
+		pt.velocity.n[1] = 0;
 
 	}
 }
@@ -486,12 +491,15 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
 bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 {
     // TODO
-	//p.position
-	//if (p.position == intersection.m_p)
-	if (p.position.n[0] == intersection.m_normal.n[0] &&
-		p.position.n[1] == intersection.m_normal.n[1] &&
-		p.position.n[2] == intersection.m_normal.n[2] )
+	
+	if (p.position.n[1] <= 0.01)
+	{
+		intersection.m_normal = p.position;
+		intersection.m_type = IntersectionType(COLLISION);
+		intersection.m_p = p.mass;
+		intersection.m_distance = 0.0;
 		return true;
+	}
 	else
 		return false;
 }
@@ -609,7 +617,7 @@ void JelloMesh::MidPointIntegrate(double dt)
 
 	ComputeForces(target);
 
-	// finding ressult
+	// finding result
 	double ahalf = 1 / 2.0;
 	for (int i = 0; i < m_rows + 1; i++)
 	{
