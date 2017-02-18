@@ -2,17 +2,17 @@
 #include <GL/glut.h>
 #include <algorithm>
 
-// TODO
-double JelloMesh::g_structuralKs = 0.0; 
-double JelloMesh::g_structuralKd = 0.0; 
-double JelloMesh::g_attachmentKs = 0.0;
-double JelloMesh::g_attachmentKd = 0.0;
-double JelloMesh::g_shearKs = 0.0;
-double JelloMesh::g_shearKd = 0.0;
-double JelloMesh::g_bendKs = 0.0;
-double JelloMesh::g_bendKd = 0.0;
-double JelloMesh::g_penaltyKs = 0.0;
-double JelloMesh::g_penaltyKd = 0.0;
+// TODO 2/18/17 added some values just to see if it makes any difference
+double JelloMesh::g_structuralKs = 1.0; 
+double JelloMesh::g_structuralKd = 2.0; 
+double JelloMesh::g_attachmentKs = 0.2;
+double JelloMesh::g_attachmentKd = 0.1;
+double JelloMesh::g_shearKs = 0.50;
+double JelloMesh::g_shearKd = 0.50;
+double JelloMesh::g_bendKs = 0.30;
+double JelloMesh::g_bendKd = 0.30;
+double JelloMesh::g_penaltyKs = 0.70;
+double JelloMesh::g_penaltyKd = 0.70;
 
 JelloMesh::JelloMesh() :     
     m_integrationType(JelloMesh::RK4), m_drawflags(MESH | STRUCTURAL),
@@ -432,7 +432,8 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
         }
     }
 
-    // Update springs
+	// TODO
+	// Update springs 2/10/17 implemented based on some spring formulas found in online document
     for(unsigned int i = 0; i < m_vsprings.size(); i++)
     {
         Spring& spring = m_vsprings[i];
@@ -451,24 +452,28 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
 		a.force += deltaP;
 		b.force -= deltaP;
 
-        // TODO
     }
 }
 
 void JelloMesh::ResolveContacts(ParticleGrid& grid)
 {
 	
-    for (unsigned int i = 0; i < m_vcontacts.size(); i++)
-    {
-       const Intersection& contact = m_vcontacts[i];
-       Particle& p = GetParticle(grid, contact.m_p);
-       vec3 normal = contact.m_normal; 
+	for (unsigned int i = 0; i < m_vcontacts.size(); i++)
+	{
+		const Intersection& contact = m_vcontacts[i];
+		Particle& p = GetParticle(grid, contact.m_p);
+		vec3 normal = contact.m_normal;
 
-        // TODO
-	   p.force -= p.force;
-	   p.velocity.n[1] = 0;
-    }
+		// TODO
+		p.force -= p.force;
+		p.force -= p.force;
+		p.velocity.n[0] = 0;
+	    p.velocity.n[1] = 0;
+	    p.velocity.n[2] = 0;
+	    ComputeForces(grid);
+	}
 	/**/
+	
 }
 
 void JelloMesh::ResolveCollisions(ParticleGrid& grid)
@@ -490,13 +495,13 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
 
 bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 {
-    // TODO
+    // TODO  2/18/17 Got this working by setting intersection m_p to p.index
 	
 	if (p.position.n[1] <= 0.01)
 	{
 		intersection.m_normal = p.position;
 		intersection.m_type = IntersectionType(COLLISION);
-		intersection.m_p = p.mass;
+		intersection.m_p = p.index;
 		intersection.m_distance = 0.0;
 		return true;
 	}
@@ -555,7 +560,7 @@ void JelloMesh::EulerIntegrate(double dt)
 	ComputeForces(target);
 
 	// finding ressult
-	double ahalf = 1 / 2.0;
+	double ahalf = 1.0 / 2.0;
 	for (int i = 0; i < m_rows + 1; i++)
 	{
 		for (int j = 0; j < m_cols + 1; j++)
@@ -567,8 +572,6 @@ void JelloMesh::EulerIntegrate(double dt)
 
 				// 				return y + h * df(x, y);
 				p.velocity = p.velocity + k1.force;
-
-
 				p.position = p.position + k1.velocity;
 			}
 		}
@@ -594,7 +597,7 @@ void JelloMesh::MidPointIntegrate(double dt)
 	ParticleGrid target = m_vparticles;  // target is a copy!
 	ParticleGrid& source = m_vparticles;  // source is a ptr!
 
-										  // Step 1
+	// Step 1
 	ParticleGrid accum1 = m_vparticles;
 	for (int i = 0; i < m_rows + 1; i++)
 	{
