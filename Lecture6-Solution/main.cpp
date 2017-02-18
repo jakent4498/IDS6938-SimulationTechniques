@@ -3,6 +3,8 @@
 
 #include <cmath>
 #include<iostream>
+#include<fstream>
+using namespace std;
 #include<iomanip>
 #include<math.h>
 #include <string>
@@ -13,7 +15,7 @@ Compute the dy/dx
 */
 double df(double x, double y)            //function for defining dy/dx
 {
-    return y - (1 / 2)*exp(x / 2)*sin(5 * x) + 5 * exp(x / 2)*cos(5 * x);
+    return y - (1.0 / 2.0)*exp(x / 2.0)*sin(5.0 * x) + 5.0 * exp(x / 2.0)*cos(5.0 * x);
 }
 
 
@@ -22,7 +24,7 @@ Compute the exact answer
 */
 double exact(double x)            //function for defining dy/dx
 {
-    return exp(x / 2)*sin(5 * x);
+    return (20.0/101.0)*exp(x / 2.0)*cos(5.0 * x) + (99.0/101.0)*exp(x / 2.0)*sin(5.0 * x) - (20.0/101.0);
 }
 
 
@@ -74,13 +76,13 @@ std::string toString(double x, double y_euler, double y_midpoint, double y_RK4, 
 {
 	
 	std::ostringstream out;
-	out << std::setprecision(2) << x << "\t";
-	out << std::setprecision(presision) << y_euler << "\t";
-	out << std::setprecision(presision) << y_midpoint << "\t";
-	out << std::setprecision(presision) << y_RK4 << "\t";
-	out << std::setprecision(presision) << y_exact << "\t";
-	out << std::setprecision(5) << error(exact(x), y_euler) << "%\t";
-	out << std::setprecision(5) << error(exact(x), y_midpoint) << "%\t";
+	out << std::setprecision(2) << x << ",";
+	out << std::setprecision(presision) << y_euler << ",";
+	out << std::setprecision(presision) << y_midpoint << ",";
+	out << std::setprecision(presision) << y_RK4 << ",";
+	out << std::setprecision(presision) << y_exact << ",";
+	out << std::setprecision(5) << error(exact(x), y_euler) << "%,";
+	out << std::setprecision(5) << error(exact(x), y_midpoint) << "%,";
 	out << std::setprecision(5) << error(exact(x), y_RK4)<<"%";
 	
 	return   out.str();
@@ -96,28 +98,34 @@ int main()
 	double y_midpoint = 0.0;
 	double y_RK4 = 0.0;
     double x = 0.0;
+	double xb = 10.0;
     double h = 0.1;
 
-	std::cout << std::fixed << std::showpoint;
+	ofstream myfile;
+	myfile.open("jakhw1.csv");
+
+	myfile << std::fixed << std::showpoint;
     // Header information for column printouts
-	std::cout << "x" << "\t" << "y (Euler)" << "\t" << "y (midpoint)" << "\t" << "y (RK44)" << "\t"
-		<< "EXACT" << "\t\t" << "%Err(E)" << "\t\t" << "%Err(M)" << "\t\t" << "%Err(RK4)" << std::endl;
-	std::cout << "----" << "\t" << "----------" << "\t" << "----------" << "\t" << "----------"
-		<< "\t" << "----------" << "\t" << "-------"<<"\t\t" << "-------" << "\t\t" << "------" << std::endl;
+	myfile << "x" << "," << "y (Euler)" << "," << "y (midpoint)" << "," << "y (RK44)" << ","
+		<< "EXACT" << "," << "%Err(E)" << "," << "%Err(M)" << "," << "%Err(RK4)" << std::endl;
+	myfile << "----" << "," << "----------" << "," << "----------" << "," << "----------"
+		<< "," << "----------" << "," << "-------"<<"," << "-------" << "," << "------" << std::endl;
 
+	int range = (xb - x) / h;
 	//intial values
-	std::cout<< toString(x, y_euler, y_midpoint, y_RK4, exact(x), 10) << std::endl;
+	myfile<< toString(x, y_euler, y_midpoint, y_RK4, exact(x), 10) << std::endl;
 
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < range; i++)
     {
 		y_euler = rk1(y_euler,h,x);  //caculate y_{i+1}
 		y_midpoint = rk2(y_midpoint, h, x);  //caculate y_{i+1}
 		y_RK4 = rk4(y_RK4, h, x);  //caculate y_{i+1}
         x = x + h;       //increment x
 
-		std::cout << toString(x, y_euler, y_midpoint, y_RK4, exact(x), 10) << std::endl;
+		myfile << toString(x, y_euler, y_midpoint, y_RK4, exact(x), 10) << std::endl;
 	}
 
+	myfile.close();
 
     return 0;
 }
