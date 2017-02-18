@@ -74,7 +74,7 @@ double rk4(double y, double h, double x)
 
 std::string toString(double x, double y_euler, double y_midpoint, double y_RK4, double y_exact, double presision)
 {
-	
+
 	std::ostringstream out;
 	out << std::setprecision(2) << x << ",";
 	out << std::setprecision(presision) << y_euler << ",";
@@ -83,8 +83,20 @@ std::string toString(double x, double y_euler, double y_midpoint, double y_RK4, 
 	out << std::setprecision(presision) << y_exact << ",";
 	out << std::setprecision(5) << error(exact(x), y_euler) << "%,";
 	out << std::setprecision(5) << error(exact(x), y_midpoint) << "%,";
-	out << std::setprecision(5) << error(exact(x), y_RK4)<<"%";
-	
+	out << std::setprecision(5) << error(exact(x), y_RK4) << "%";
+
+	return   out.str();
+}
+
+std::string toStringjak(double x, double y, double y_exact, double presision)
+{
+
+	std::ostringstream out;
+	out << std::setprecision(5) << x << ",";
+	out << std::setprecision(presision) << y << ",";
+	out << std::setprecision(presision) << y_exact << ",";
+	out << std::setprecision(5) << error(exact(x), y) << "%,";
+
 	return   out.str();
 }
 
@@ -124,8 +136,67 @@ int main()
 
 		myfile << toString(x, y_euler, y_midpoint, y_RK4, exact(x), 10) << std::endl;
 	}
-
 	myfile.close();
 
+	double y_h1 = 0.0;
+	double y_h2 = 0.0;
+	double y_h3 = 0.0;
+	double h1 = 0.1;
+	double h2 = 0.05;
+	double h3 = 0.001;
+	x = 0.0;
+	xb = 10.0;
+
+	ofstream myfile2;
+	myfile2.open("jakhw1b.csv");
+	myfile2 << std::fixed << std::showpoint;
+
+	// Header information for column printouts
+	myfile2 << "x" << "," << "y (H1)" << "," << "EXACT" << "," << "%Err(H1)" << std::endl;
+	myfile2 << "----" << "," << "----------" << "," << "----------" << "," << "-------" << std::endl;
+
+	range = (xb - x) / h1;
+	//intial values
+	myfile2 << toStringjak(x, y_h1, exact(x), 10) << std::endl;
+	for (int i = 0; i < range; i++)
+	{
+		y_h1 = rk4(y_h1, h1, x);  //caculate y_{i+1}
+		x = x + h1;       //increment x
+
+		myfile2 << toStringjak(x, y_h1, exact(x), 10) << std::endl; 
+	}
+	x = 0.0;
+	xb = 10.0;
+	// Header information for column printouts
+	myfile2 << "x" << "," << "y (H2)" << "," << "EXACT" << "," << "%Err(H2)" << std::endl;
+	myfile2 << "----" << "," << "----------" << "," << "----------" << "," << "-------" << std::endl;
+
+	range = (xb - x) / h2;
+	//intial values
+	myfile2 << toStringjak(x, y_h2, exact(x), 10) << std::endl;
+	for (int i = 0; i < range; i++)
+	{
+		y_h2 = rk4(y_h2, h2, x);  //caculate y_{i+1}
+		x = x + h2;       //increment x
+
+		myfile2 << toStringjak(x, y_h2, exact(x), 10) << std::endl;
+	}
+	x = 0.0;
+	xb = 10.0;
+	// Header information for column printouts
+	myfile2 << "x" << "," << "y (H3)" << "," << "EXACT" << "," << "%Err(H3)" << std::endl;
+	myfile2 << "----" << "," << "----------" << "," << "----------" << "," << "-------" << std::endl;
+
+	range = (xb - x) / h3;
+	//intial values
+	myfile2 << toStringjak(x, y_h3, exact(x), 10) << std::endl;
+	for (int i = 0; i < range; i++)
+	{
+		y_h3 = rk4(y_h3, h3, x);  //caculate y_{i+1}
+		x = x + h3;       //increment x
+
+		myfile2 << toStringjak(x, y_h3, exact(x), 10) << std::endl;
+	}
+	myfile2.close();
     return 0;
 }
