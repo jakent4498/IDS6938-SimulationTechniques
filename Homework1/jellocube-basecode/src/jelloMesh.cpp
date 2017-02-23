@@ -3,8 +3,8 @@
 #include <algorithm>
 
 // TODO 2/18/17 added some values just to see if it makes any difference
-double JelloMesh::g_structuralKs = 1.0; 
-double JelloMesh::g_structuralKd = 2.0; 
+double JelloMesh::g_structuralKs = 0.1; 
+double JelloMesh::g_structuralKd = 0.2; 
 double JelloMesh::g_attachmentKs = 0.2;
 double JelloMesh::g_attachmentKd = 0.1;
 double JelloMesh::g_shearKs = 0.50;
@@ -463,13 +463,12 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 		const Intersection& contact = m_vcontacts[i];
 		Particle& p = GetParticle(grid, contact.m_p);
 		vec3 normal = contact.m_normal;
+		double restitution = 1.5;
 
-		// TODO
-		p.force -= p.force;
-		p.force -= p.force;
-		p.velocity.n[0] = 0;
-	    p.velocity.n[1] = 0;
-	    p.velocity.n[2] = 0;
+		// TODO 2/23/17  copied v formula from webcourses
+		// v'=v-2(v \cdot N)Nr
+		p.force -= 1.3*p.force;
+		p.velocity = p.velocity - 2*Dot(p.velocity,normal)*normal * restitution;
 	    ComputeForces(grid);
 	}
 	/**/
@@ -484,11 +483,13 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
         Particle& pt = GetParticle(grid, result.m_p);
         vec3 normal = result.m_normal;
         float dist = result.m_distance;
+		double restitution = 1.5;
 
-        // TODO
-		// Try just stopping all forces to see if we can do that
-		pt.force -= pt.force;
-		pt.velocity.n[1] = 0;
+		// TODO 2/23/17 copied v formula from webcourses
+		// v'=v-2(v \cdot N)Nr
+		pt.force -= 2*pt.force;
+		pt.velocity = pt.velocity - 2 * Dot(pt.velocity, normal)*normal * restitution;
+		ComputeForces(grid);
 
 	}
 }
