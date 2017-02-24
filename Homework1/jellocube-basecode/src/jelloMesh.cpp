@@ -3,11 +3,11 @@
 #include <algorithm>
 
 // TODO 2/18/17 added some values just to see if it makes any difference
-double JelloMesh::g_structuralKs = 0.1; 
-double JelloMesh::g_structuralKd = 0.2; 
-double JelloMesh::g_attachmentKs = 0.2;
-double JelloMesh::g_attachmentKd = 0.1;
-double JelloMesh::g_shearKs = 0.50;
+double JelloMesh::g_structuralKs = 1900.0; 
+double JelloMesh::g_structuralKd = 20; 
+double JelloMesh::g_attachmentKs = 500;
+double JelloMesh::g_attachmentKd = 10;
+double JelloMesh::g_shearKs = 20;
 double JelloMesh::g_shearKd = 0.50;
 double JelloMesh::g_bendKs = 0.30;
 double JelloMesh::g_bendKd = 0.30;
@@ -408,7 +408,6 @@ void JelloMesh::CheckForCollisions(ParticleGrid& grid, const World& world)
                     else if (world.m_shapes[i]->GetType() == World::GROUND && 
                         FloorIntersection(p, intersection))
                     {
-//						std::cout << "I got here" << std::endl;
                         m_vcontacts.push_back(intersection);
                     }
                 }
@@ -463,12 +462,15 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 		const Intersection& contact = m_vcontacts[i];
 		Particle& p = GetParticle(grid, contact.m_p);
 		vec3 normal = contact.m_normal;
-		double restitution = 1.5;
+		double restitution = 0.6;
 
 		// TODO 2/23/17  copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
-		p.force -= 1.3*p.force;
-		p.velocity = p.velocity - 2*Dot(p.velocity,normal)*normal * restitution;
+//		p.force -= p.force;
+//		p.force = p.force - 1.1 * Dot(p.force, normal) * normal;
+//		p.force = vec3(0, 0, 0);
+		p.force = -1.3*p.force;
+		p.velocity = p.velocity - 2*(p.velocity*normal )* normal* restitution;
 	    ComputeForces(grid);
 	}
 	/**/
@@ -487,8 +489,8 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
 
 		// TODO 2/23/17 copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
-		pt.force -= 2*pt.force;
-		pt.velocity = pt.velocity - 2 * Dot(pt.velocity, normal)*normal * restitution;
+		pt.force -= dist*pt.force;
+		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
 		ComputeForces(grid);
 
 	}
@@ -498,12 +500,20 @@ bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 {
     // TODO  2/18/17 Got this working by setting intersection m_p to p.index
 	
-	if (p.position.n[1] <= 0.01)
+	if (p.position.n[1] <= 0.00)
 	{
-		intersection.m_normal = p.position;
+		intersection.m_normal = vec3(0,1,0);
 		intersection.m_type = IntersectionType(COLLISION);
 		intersection.m_p = p.index;
-		intersection.m_distance = 0.0;
+		intersection.m_distance = -1.0 * p.position.n[1];
+		return true;
+	}
+	if (p.position.n[1] <= 0.1)
+	{
+		intersection.m_normal = p.position;
+		intersection.m_type = JelloMesh::CONTACT;
+		intersection.m_p = p.index;
+		intersection.m_distance = 0.1;
 		return true;
 	}
 	else
