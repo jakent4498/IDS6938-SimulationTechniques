@@ -8,7 +8,7 @@ double JelloMesh::g_structuralKd = 20;
 double JelloMesh::g_attachmentKs = 500;
 double JelloMesh::g_attachmentKd = 10;
 double JelloMesh::g_shearKs = 20;
-double JelloMesh::g_shearKd = 0.50;
+double JelloMesh::g_shearKd = 1.50;
 double JelloMesh::g_bendKs = 0.30;
 double JelloMesh::g_bendKd = 0.30;
 double JelloMesh::g_penaltyKs = 0.70;
@@ -439,9 +439,25 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
         Particle& a = GetParticle(grid, spring.m_p1);
         Particle& b = GetParticle(grid, spring.m_p2);
 
-		vec3& deltaP = a.position - b.position;
+
+		vec3& deltaP = b.position - a.position;
 		double dist = deltaP.Length();
-		double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
+		if (dist != 0) {
+			//double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
+			vec3 Felastic = -1 * spring.m_Ks * (dist - spring.m_restLen) * deltaP / dist;
+
+			vec3 deltaV = a.velocity - b.velocity;
+			//double DTerm = (deltaV * deltaP) * spring.m_Kd / dist;
+			vec3 Fdamp = -1 * spring.m_Kd * ((deltaV * deltaP) / dist) * deltaP / dist;
+
+			//deltaP = deltaP / dist;
+			//deltaP = deltaP * (-(HTerm + DTerm));
+			a.force += Felastic;
+			a.force += Fdamp;
+			b.force -= Felastic;
+			b.force -= Fdamp;
+		}
+/*		double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
 
 		vec3 deltaV = a.velocity - b.velocity;
 		double DTerm = Dot(deltaV, deltaP) * spring.m_Kd / dist;
@@ -450,7 +466,7 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
 		deltaP = deltaP * (-(HTerm + DTerm));
 		a.force += deltaP;
 		b.force -= deltaP;
-
+*/
     }
 }
 
