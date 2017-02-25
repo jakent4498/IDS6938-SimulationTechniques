@@ -3,14 +3,14 @@
 #include <algorithm>
 
 // TODO 2/18/17 added some values just to see if it makes any difference
-double JelloMesh::g_structuralKs = 1900.0; 
-double JelloMesh::g_structuralKd = 20; 
-double JelloMesh::g_attachmentKs = 500;
-double JelloMesh::g_attachmentKd = 10;
-double JelloMesh::g_shearKs = 20;
-double JelloMesh::g_shearKd = 1.50;
-double JelloMesh::g_bendKs = 0.30;
-double JelloMesh::g_bendKd = 0.30;
+double JelloMesh::g_structuralKs = 4000;
+double JelloMesh::g_structuralKd = 10.0; 
+double JelloMesh::g_attachmentKs = 0.0;
+double JelloMesh::g_attachmentKd = 0.0;
+double JelloMesh::g_shearKs = 5000.0;
+double JelloMesh::g_shearKd = 10.50;
+double JelloMesh::g_bendKs = 4000.30;
+double JelloMesh::g_bendKd = 10.30;
 double JelloMesh::g_penaltyKs = 0.70;
 double JelloMesh::g_penaltyKd = 0.70;
 
@@ -418,7 +418,7 @@ void JelloMesh::CheckForCollisions(ParticleGrid& grid, const World& world)
 
 void JelloMesh::ComputeForces(ParticleGrid& grid)
 {
-    // Add external froces to all points
+    // Add external forces to all points
     for (int i = 0; i < m_rows+1; i++)
     {
         for (int j = 0; j < m_cols+1; j++)
@@ -440,34 +440,42 @@ void JelloMesh::ComputeForces(ParticleGrid& grid)
         Particle& b = GetParticle(grid, spring.m_p2);
 
 
-		vec3& deltaP = b.position - a.position;
+		vec3 deltaP = b.position - a.position;
 		double dist = deltaP.Length();
+		vec3 deltaPnorm = deltaP / dist;
 		if (dist != 0) {
-			//double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
-			vec3 Felastic = -1 * spring.m_Ks * (dist - spring.m_restLen) * deltaP / dist;
+			vec3 Felastic = -1.0*spring.m_Ks * (dist - spring.m_restLen) * deltaPnorm;
 
-			vec3 deltaV = a.velocity - b.velocity;
-			//double DTerm = (deltaV * deltaP) * spring.m_Kd / dist;
-			vec3 Fdamp = -1 * spring.m_Kd * ((deltaV * deltaP) / dist) * deltaP / dist;
+			vec3 deltaV = b.velocity - a.velocity;
+			vec3 Fdamp = -1.0*spring.m_Kd * (Dot(deltaV, deltaP) / dist) *deltaPnorm;
+			vec3 Ftotal = Felastic + Fdamp;
 
-			//deltaP = deltaP / dist;
-			//deltaP = deltaP * (-(HTerm + DTerm));
-			a.force += Felastic;
-			a.force += Fdamp;
-			b.force -= Felastic;
-			b.force -= Fdamp;
+			a.force -= Ftotal;
+			b.force += Ftotal;
 		}
-/*		double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
+		/*
+		double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
 
-		vec3 deltaV = a.velocity - b.velocity;
+		vec3 deltaV = b.velocity - a.velocity;
 		double DTerm = Dot(deltaV, deltaP) * spring.m_Kd / dist;
-        
+
 		deltaP = deltaP / dist;
 		deltaP = deltaP * (-(HTerm + DTerm));
 		a.force += deltaP;
 		b.force -= deltaP;
-*/
-    }
+		// end first attempt
+		//double HTerm = (dist - spring.m_restLen) * spring.m_Ks;
+		vec3 Felastic = -1 * spring.m_Ks * (dist - spring.m_restLen) * deltaP / dist;
+
+		vec3 deltaV = b.velocity - a.velocity;
+		//double DTerm = (deltaV * deltaP) * spring.m_Kd / dist;
+		vec3 Fdamp = -1 * spring.m_Kd * ((deltaV * deltaP) / dist) * deltaP / dist;
+
+		a.force = a.force + Felastic + Fdamp;
+		b.force = b.force - Felastic - Fdamp;
+		}
+		*/
+	}
 }
 
 void JelloMesh::ResolveContacts(ParticleGrid& grid)
@@ -478,15 +486,14 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 		const Intersection& contact = m_vcontacts[i];
 		Particle& p = GetParticle(grid, contact.m_p);
 		vec3 normal = contact.m_normal;
-		double restitution = 0.6;
+		double restitution =  .75;
 
 		// TODO 2/23/17  copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
 //		p.force -= p.force;
-//		p.force = p.force - 1.1 * Dot(p.force, normal) * normal;
+		p.force = p.force - (2.0 * Dot(p.force, normal)) * normal * restitution;
 //		p.force = vec3(0, 0, 0);
-		p.force = -1.3*p.force;
-		p.velocity = p.velocity - 2*(p.velocity*normal )* normal* restitution;
+		p.velocity = p.velocity - (2.0 * Dot(p.velocity,normal))* normal * restitution;
 	    ComputeForces(grid);
 	}
 	/**/
@@ -519,6 +526,7 @@ bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 	if (p.position.n[1] <= 0.00)
 	{
 		intersection.m_normal = vec3(0,1,0);
+		intersection.m_normal = intersection.m_normal.Normalize();
 		intersection.m_type = IntersectionType(COLLISION);
 		intersection.m_p = p.index;
 		intersection.m_distance = -1.0 * p.position.n[1];
@@ -526,10 +534,11 @@ bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 	}
 	if (p.position.n[1] <= 0.1)
 	{
-		intersection.m_normal = p.position;
+		intersection.m_normal = vec3(0, 1, 0);
+		intersection.m_normal = intersection.m_normal.Normalize();
 		intersection.m_type = JelloMesh::CONTACT;
 		intersection.m_p = p.index;
-		intersection.m_distance = 0.1;
+		intersection.m_distance = p.position.n[1];
 		return true;
 	}
 	else
@@ -560,33 +569,10 @@ void JelloMesh::EulerIntegrate(double dt)
 	}
 	*/
 	double halfdt = 0.5 * dt;
-	ParticleGrid target = m_vparticles;  // target is a copy!
-	ParticleGrid& source = m_vparticles;  // source is a ptr!
 
-										  // Step 1
-	ParticleGrid accum1 = m_vparticles;
-	for (int i = 0; i < m_rows + 1; i++)
-	{
-		for (int j = 0; j < m_cols + 1; j++)
-		{
-			for (int k = 0; k < m_stacks + 1; k++)
-			{
-				Particle& s = GetParticle(source, i, j, k);
+	ComputeForces(m_vparticles);
 
-				Particle& k1 = GetParticle(accum1, i, j, k);
-				k1.force = halfdt * s.force * 1 / s.mass;
-				k1.velocity = halfdt * s.velocity;
-
-				Particle& t = GetParticle(target, i, j, k);
-				t.velocity = s.velocity + k1.force;
-				t.position = s.position + k1.velocity;
-			}
-		}
-	}
-
-	ComputeForces(target);
-
-	// finding ressult
+	// finding ressult reworked Euler 2/24/17
 	double ahalf = 1.0 / 2.0;
 	for (int i = 0; i < m_rows + 1; i++)
 	{
@@ -595,11 +581,9 @@ void JelloMesh::EulerIntegrate(double dt)
 			for (int k = 0; k < m_stacks + 1; k++)
 			{
 				Particle& p = GetParticle(m_vparticles, i, j, k);
-				Particle& k1 = GetParticle(accum1, i, j, k);
-
 				// 				return y + h * df(x, y);
-				p.velocity = p.velocity + k1.force;
-				p.position = p.position + k1.velocity;
+				p.position = p.position + halfdt *p.velocity;
+				p.velocity = p.velocity + halfdt * p.force;
 			}
 		}
 	}
