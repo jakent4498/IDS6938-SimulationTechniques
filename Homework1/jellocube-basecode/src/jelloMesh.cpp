@@ -408,7 +408,8 @@ void JelloMesh::CheckForCollisions(ParticleGrid& grid, const World& world)
                     else if (world.m_shapes[i]->GetType() == World::GROUND && 
                         FloorIntersection(p, intersection))
                     {
-                        m_vcontacts.push_back(intersection);
+                        if (intersection.m_type==CONTACT) m_vcontacts.push_back(intersection);
+						else if (intersection.m_type == COLLISION) m_vcollisions.push_back(intersection);
                     }
                 }
             }
@@ -512,8 +513,10 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
 
 		// TODO 2/23/17 copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
-		pt.force -= dist*pt.force;
+		pt.force = pt.force - (2.0 * Dot(pt.force, normal)) * normal * restitution;
 		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
+		// move the particle above the surface
+		pt.position = pt.position + normal*dist;
 		ComputeForces(grid);
 
 	}
