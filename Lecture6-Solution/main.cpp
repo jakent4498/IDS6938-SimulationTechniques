@@ -24,7 +24,7 @@ Compute the exact answer
 */
 double exact(double x)            //function for defining dy/dx
 {
-    return (20.0/101.0)*exp(x / 2.0)*cos(5.0 * x) + (99.0/101.0)*exp(x / 2.0)*sin(5.0 * x) - (20.0/101.0);
+    return (exp(x/2.0))*sin(5.0*x);
 }
 
 
@@ -114,7 +114,7 @@ int main()
     double h = 0.1;
 
 	ofstream myfile;
-	myfile.open("jakhw1.csv");
+	myfile.open("jak-HW1a2.csv");
 
 	myfile << std::fixed << std::showpoint;
     // Header information for column printouts
@@ -142,13 +142,13 @@ int main()
 	double y_h2 = 0.0;
 	double y_h3 = 0.0;
 	double h1 = 0.1;
-	double h2 = 0.05;
-	double h3 = 0.001;
+	double h2 = 0.2;
+	double h3 = 0.5;
 	x = 0.0;
 	xb = 10.0;
 
 	ofstream myfile2;
-	myfile2.open("jakhw1b.csv");
+	myfile2.open("jak-HW1b2.csv");
 	myfile2 << std::fixed << std::showpoint;
 
 	// Header information for column printouts
