@@ -3,14 +3,14 @@
 #include <algorithm>
 
 // TODO 2/18/17 added some values just to see if it makes any difference
-double JelloMesh::g_structuralKs = 4000;
-double JelloMesh::g_structuralKd = 10.0; 
+double JelloMesh::g_structuralKs = 6222;
+double JelloMesh::g_structuralKd = 8.0; 
 double JelloMesh::g_attachmentKs = 0.0;
 double JelloMesh::g_attachmentKd = 0.0;
-double JelloMesh::g_shearKs = 5000.0;
-double JelloMesh::g_shearKd = 10.50;
-double JelloMesh::g_bendKs = 4000.30;
-double JelloMesh::g_bendKd = 10.30;
+double JelloMesh::g_shearKs = 800.0;
+double JelloMesh::g_shearKd = 15.50;
+double JelloMesh::g_bendKs = 400.30;
+double JelloMesh::g_bendKd = 8.30;
 double JelloMesh::g_penaltyKs = 0.70;
 double JelloMesh::g_penaltyKd = 0.70;
 
@@ -199,6 +199,23 @@ void JelloMesh::InitJelloMesh()
             }
         }
     }
+
+	// Setup shear springs
+	for (int i = 0; i < m_rows + 1; i++)
+	{
+		for (int j = 0; j < m_cols + 1; j++)
+		{
+			for (int k = 0; k < m_stacks + 1; k++)
+			{
+				if (i < m_rows && j < m_cols) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i + 1, j + 1, k));
+				if (i < m_rows && k < m_stacks) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i + 1, j, k + 1));
+				if (j < m_cols && k < m_stacks) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i, j + 1, k + 1));
+				if (i < m_rows && j > 0) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i+1, j-1, k)); 
+				if (i < m_rows && k > 0) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i+1, j, k-1));
+				if (j < m_cols && k > 0) AddShearSpring(GetParticle(g, i, j, k), GetParticle(g, i, j+1, k-1));
+			}
+		}
+	}
 
     // Init mesh geometry
     m_mesh.clear();
@@ -485,19 +502,19 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 	for (unsigned int i = 0; i < m_vcontacts.size(); i++)
 	{
 		const Intersection& contact = m_vcontacts[i];
-		Particle& p = GetParticle(grid, contact.m_p);
+		Particle& pt = GetParticle(grid, contact.m_p);
 		vec3 normal = contact.m_normal;
-		double restitution =  .75;
+		double dist = contact.m_distance;
+		double restitution = .9;
 
-		// TODO 2/23/17  copied v formula from webcourses
+		// TODO 2/23/17 copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
-//		p.force -= p.force;
-		p.force = p.force - (2.0 * Dot(p.force, normal)) * normal * restitution;
-//		p.force = vec3(0, 0, 0);
-		p.velocity = p.velocity - (2.0 * Dot(p.velocity,normal))* normal * restitution;
-	    ComputeForces(grid);
+//		pt.force = pt.force - (2.0 * Dot(pt.force, normal)) * normal * restitution;
+		pt.force -= pt.force;
+		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
+		// move the particle above the surface
+		pt.position = pt.position + normal*dist;
 	}
-	/**/
 	
 }
 
@@ -506,18 +523,14 @@ void JelloMesh::ResolveCollisions(ParticleGrid& grid)
     for(unsigned int i = 0; i < m_vcollisions.size(); i++)
     {
         Intersection result = m_vcollisions[i];
-        Particle& pt = GetParticle(grid, result.m_p);
+        Particle& p = GetParticle(grid, result.m_p);
         vec3 normal = result.m_normal;
-        float dist = result.m_distance;
-		double restitution = 1.5;
+		double restitution = .85;
 
-		// TODO 2/23/17 copied v formula from webcourses
+		// TODO 2/23/17  copied v formula from webcourses
 		// v'=v-2(v \cdot N)Nr
-		pt.force = pt.force - (2.0 * Dot(pt.force, normal)) * normal * restitution;
-		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
-		// move the particle above the surface
-		pt.position = pt.position + normal*dist;
-		ComputeForces(grid);
+		p.force = p.force - (2.0 * Dot(p.force, normal)) * normal * restitution;
+		p.velocity = p.velocity - (2.0 * Dot(p.velocity, normal))* normal * restitution;
 
 	}
 }
@@ -530,7 +543,7 @@ bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 	{
 		intersection.m_normal = vec3(0,1,0);
 		intersection.m_normal = intersection.m_normal.Normalize();
-		intersection.m_type = IntersectionType(COLLISION);
+		intersection.m_type = IntersectionType(CONTACT);
 		intersection.m_p = p.index;
 		intersection.m_distance = -1.0 * p.position.n[1];
 		return true;
@@ -539,7 +552,7 @@ bool JelloMesh::FloorIntersection(Particle& p, Intersection& intersection)
 	{
 		intersection.m_normal = vec3(0, 1, 0);
 		intersection.m_normal = intersection.m_normal.Normalize();
-		intersection.m_type = JelloMesh::CONTACT;
+		intersection.m_type = JelloMesh::COLLISION;
 		intersection.m_p = p.index;
 		intersection.m_distance = p.position.n[1];
 		return true;

@@ -133,6 +133,7 @@ public:
     static double g_bendKd;
     static double g_penaltyKs;
     static double g_penaltyKd;
+	static double g_threshold;
 
     static const unsigned int MESH = 0x10;
     static const unsigned int NORMALS = 0x100;
