@@ -13,11 +13,13 @@ double JelloMesh::g_bendKs = 400.30;
 double JelloMesh::g_bendKd = 8.30;
 double JelloMesh::g_penaltyKs = 0.70;
 double JelloMesh::g_penaltyKd = 0.70;
+double JelloMesh::g_threshold = 0.1;
 
 JelloMesh::JelloMesh() :     
     m_integrationType(JelloMesh::RK4), m_drawflags(MESH | STRUCTURAL),
     m_cols(0), m_rows(0), m_stacks(0), m_width(0.0), m_height(0.0), m_depth(0.0)
 {
+
     SetSize(1.0, 1.0, 1.0);
     SetGridSize(6, 6, 6);
 }
@@ -420,8 +422,9 @@ void JelloMesh::CheckForCollisions(ParticleGrid& grid, const World& world)
                     if (world.m_shapes[i]->GetType() == World::CYLINDER && 
                         CylinderIntersection(p, (World::Cylinder*) world.m_shapes[i], intersection))
                     {
-                        m_vcontacts.push_back(intersection);
-                    }
+						if (intersection.m_type == CONTACT) m_vcontacts.push_back(intersection);
+						else if (intersection.m_type == COLLISION) m_vcollisions.push_back(intersection);
+					}
                     else if (world.m_shapes[i]->GetType() == World::GROUND && 
                         FloorIntersection(p, intersection))
                     {
@@ -570,6 +573,17 @@ bool JelloMesh::CylinderIntersection(Particle& p, World::Cylinder* cylinder,
     double cylinderRadius = cylinder->r; 
 
     // TODO
+	// Starting to figure out a cyclinder interesection
+	vec3 p2axis = p.position - cylinderAxis;
+	if (p2axis.Length() <= cylinderRadius)
+	{
+		result.m_distance = cylinderRadius - p2axis.Length();
+		result.m_p = p.index;
+		result.m_normal = p.position.Normalize();
+		result.m_type = JelloMesh::COLLISION;
+		return true;
+
+	}
     return false;
 }
 
@@ -584,12 +598,9 @@ void JelloMesh::EulerIntegrate(double dt)
 		return y + h * df(x, y);
 	}
 	*/
-	double halfdt = 0.5 * dt;
-
 	ComputeForces(m_vparticles);
 
 	// finding ressult reworked Euler 2/24/17
-	double ahalf = 1.0 / 2.0;
 	for (int i = 0; i < m_rows + 1; i++)
 	{
 		for (int j = 0; j < m_cols + 1; j++)
@@ -598,8 +609,8 @@ void JelloMesh::EulerIntegrate(double dt)
 			{
 				Particle& p = GetParticle(m_vparticles, i, j, k);
 				// 				return y + h * df(x, y);
-				p.position = p.position + halfdt *p.velocity;
-				p.velocity = p.velocity + halfdt * p.force;
+				p.velocity = p.velocity + dt * p.force;
+				p.position = p.position + dt * p.velocity;
 			}
 		}
 	}

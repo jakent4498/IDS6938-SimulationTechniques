@@ -8,5 +8,9 @@
     <ground>
       <bodymaterial name="dirt" />
     </ground>
-  </bodies>
+     <cylinder r="0.3" sx="-1.0" sy="0.0" sz="0.0" ex="1.0" ey="0.0" ez="0.0">
+      <bodymaterial name="light gray"/>
+    </cylinder>
+
+ </bodies>
 </world>
