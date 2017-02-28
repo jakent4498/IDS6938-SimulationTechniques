@@ -15,7 +15,7 @@ double JelloMesh::g_shearKd = 8.50;
 double JelloMesh::g_bendKs = 3222.30;
 //double JelloMesh::g_bendKd = 8.30;
 double JelloMesh::g_bendKd = 8.30;
-double JelloMesh::g_penaltyKs = 177.70;
+double JelloMesh::g_penaltyKs = 0.70;
 double JelloMesh::g_penaltyKd = 0.70;
 double JelloMesh::g_threshold = 0.1;
 
@@ -540,7 +540,7 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 		// v'=v-2(v \cdot N)Nr
 //		pt.force = pt.force - (2.0 * Dot(pt.force, normal)) * normal * restitution;
 //		pt.force -= pt.force;
-		pt.force = -1.0*JelloMesh::g_penaltyKs*dist*normal - JelloMesh::g_penaltyKd * (Dot(pt.velocity, pt.position) / dist)*normal;
+//		pt.force = -1.0*JelloMesh::g_penaltyKs*dist*normal - JelloMesh::g_penaltyKd * (Dot(pt.velocity, pt.position) / dist)*normal;
 		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
 		// move the particle above the surface
 		pt.position = pt.position + normal*dist;
