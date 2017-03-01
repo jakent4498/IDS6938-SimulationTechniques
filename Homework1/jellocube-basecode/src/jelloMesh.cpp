@@ -16,7 +16,8 @@ double JelloMesh::g_bendKs = 2622.30;
 //double JelloMesh::g_bendKd = 8.30;
 double JelloMesh::g_bendKd = 6.30;
 // penaltyKs of 600 works well for midpoint
-// penaltyKs of 1000 works better for rk4
+// penaltyKs of 1000 to 1500
+//works better for rk4
 double JelloMesh::g_penaltyKs = 1500.70;
 double JelloMesh::g_penaltyKd = 9.0;
 double JelloMesh::g_threshold = .3;
