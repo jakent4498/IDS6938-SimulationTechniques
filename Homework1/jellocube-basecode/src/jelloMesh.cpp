@@ -10,12 +10,14 @@ double JelloMesh::g_attachmentKd = 0.0;
 //double JelloMesh::g_shearKs = 800.0;
 double JelloMesh::g_shearKs = 3222.0;
 //double JelloMesh::g_shearKd = 15.50;
-double JelloMesh::g_shearKd = 8.50;
+double JelloMesh::g_shearKd = 7.50;
 //double JelloMesh::g_bendKs = 800.30;
 double JelloMesh::g_bendKs = 2622.30;
 //double JelloMesh::g_bendKd = 8.30;
-double JelloMesh::g_bendKd = 8.30;
-double JelloMesh::g_penaltyKs = 1000.70;
+double JelloMesh::g_bendKd = 6.30;
+// penaltyKs of 600 works well for midpoint
+// penaltyKs of 1000 works better for rk4
+double JelloMesh::g_penaltyKs = 1500.70;
 double JelloMesh::g_penaltyKd = 9.0;
 double JelloMesh::g_threshold = .3;
 
@@ -552,7 +554,7 @@ void JelloMesh::ResolveContacts(ParticleGrid& grid)
 		pt.velocity = pt.velocity - 2 * (pt.velocity * normal)*normal * restitution;
 		// move the particle above the surface
 		pt.position = pt.position + normal*dist;
-		pt.force = pt.force + JelloMesh::g_penaltyKs*(dist*normal) + JelloMesh::g_penaltyKd*(pt.velocity*normal)*normal;
+//		pt.force = pt.force + JelloMesh::g_penaltyKs*(dist*normal) + JelloMesh::g_penaltyKd*(pt.velocity*normal)*normal;
 	}
 	
 }
