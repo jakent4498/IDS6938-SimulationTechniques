@@ -12,21 +12,5 @@ I will be submitting 3 days late making use of the extension granted due to an u
 | ------------- | ------------- |
 | ![](images/Part 1 Graph.jpg?raw=true)  | ![](images/deformed3.png?raw=true) |
 
-Results from Part 1
-￹
-xy (Euler)y (midpoint)y (RK44)EXACT￻
-￹
---------------------------------------------￻
-￹
-00000￻
-￹
-0.10.50.5090370.5040150.992528￻
-￹
-0.20.9860880.9418920.9299831.779364￻
-￹
-0.31.3367621.178281.1589392.134285￻
-￹
-0.41.4535841.1363811.1106281.91958￻
-
 
 
