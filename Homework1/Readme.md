@@ -49,7 +49,7 @@ double exact(double x)            //function for defining dy/dx
 
 (d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx). 
 How does hyperlink work
-[](https://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Lecture6-Solution/results/jak-HW1a.xlsx)
+[(https://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Lecture6-Solution/results/jak-HW1a.xlsx)]
 
 #Part 2: Programming a Jello Cube
 #Part 3: Written Questions
