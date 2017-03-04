@@ -47,10 +47,13 @@ double exact(double x)            //function for defining dy/dx
 |0.3|1.336762|1.17828|1.158939|2.134285|
 |0.4|1.453584|1.136381|1.110628|1.91958|
 
-(d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx). 
-How does hyperlink work
-[(https://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Lecture6-Solution/results/jak-HW1a.xlsx)]
+(d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx (https://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Lecture6-Solution/results/jak-HW1a.xlsx).
 
+(e) Vary the step size h=n  and plot the results for RK4 with 3 different values and the exact solution.  I used step size h=0.1, h=0.2 and h=0.5.  The resulting comparison is shown in the image below.
+![](../Lecture6-Solution/results/Comparison of RK4 Integration Intervals.png?raw=true)
+
+A comparison of the errors for these three intervals is shown below.
+![](../Lecture6-Solution/results/Comparison of Error for RK4 Integration Intervals.png?raw=true)
 #Part 2: Programming a Jello Cube
 #Part 3: Written Questions
 1. What is the effect of the Ks and Kd parameters on the jello?  Ks is the spring constant from Hook's Law and represents how stiff or how elastic the spring is.  In the case of the jello, higher Ks made stiffer jello just like adding more gelatin will do when cooking jello.  Kd is the damping force that decreases the spring force over time.  Decreasing Kd will increase the time required for the spring to return to equilibrium.  Decreasing Kd in the project increases the time for the jello to settle down and stop wobbling.  
