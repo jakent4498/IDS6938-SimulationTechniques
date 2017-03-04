@@ -10,26 +10,44 @@ This file has been edited by Julie A Kent.
 I will be submitting 3 days late making use of the extension granted due to an unexpected business trip outside the US where I could not take personal electronics.
 
 #Part 1 Numerical Analysis of Integration
+
+Initial Value Problem 
+The initial value problem given is the assignment is ![](images/IVP Equation.png?raw=true) where y(0)=0
+(a) Solve for the exact symbolic (analytical) solution by taking the integral gives ![](images/IVP Solution.png?raw=true) 
+Thank you Wolfram Alpha for making this easy. http://www.wolframalpha.com/calculators/integral-calculator/
+
+(b) Now there are values for the df and exact functions.  Inserting code block below for df.
+
+```
+double df(double x, double y)            //function for defining dy/dx
+{
+    return y - (1.0 / 2.0)*exp(x / 2.0)*sin(5.0 * x) + 5.0 * exp(x / 2.0)*cos(5.0 * x);
+}
+```
+Inserting code block for exact.
+```
+double exact(double x)            //function for defining dy/dx
+{
+    return (exp(x/2.0))*sin(5.0*x);
+}
+```
+(c) Run three numerical integration solutions: RK1, RK2, and RK4 to generate the numerical and exact values. A graph comparing the results for the different integration methods is shown below.
+
+
 | Comparison of integration Methods  | Comparison of Error from Integration Methods |
 | ------------- | ------------- |
 | ![](../Lecture6-Solution/results/Comparison of Integration Methods.png?raw=true) | ![](../Lecture6-Solution/results/Comparison of Error Generated from Different Integration Methods.png?raw=true) |
+###### The results for the first four integration intervals are shown in the table below.
 
-Results from Part 1
-￹
-xy (Euler)y (midpoint)y (RK44)EXACT￻
-￹
---------------------------------------------￻
-￹
-00000￻
-￹
-0.10.50.5090370.5040150.992528￻
-￹
-0.20.9860880.9418920.9299831.779364￻
-￹
-0.31.3367621.178281.1589392.134285￻
-￹
-0.41.4535841.1363811.1106281.91958￻
+|  x | y (Euler) | y (midpoint) | y (RK4) | Exact |
+|--------|--------|-----------|-----------|---------|
+| 0 | 0 | 0 | 0 | 0 |
+| 0.1 |0.5|0.509037|0.504015|0.992528|
+|0.2|0.986088|0.941892|0.929983|1.779364|
+|0.3|1.336762|1.17828|1.158939|2.134285|
+|0.4|1.453584|1.136381|1.110628|1.91958|
 
+(d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx). 
 
 #Part 2: Programming a Jello Cube
 #Part 3: Written Questions
