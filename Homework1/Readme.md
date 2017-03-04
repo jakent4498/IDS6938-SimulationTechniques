@@ -10,9 +10,9 @@ This file has been edited by Julie A Kent.
 I will be submitting 3 days late making use of the extension granted due to an unexpected business trip outside the US where I could not take personal electronics.
 
 #Part 1 Numerical Analysis of Integration
-| Part 1 Graph  | deformed jello |
+| Comparison of integration Methods  | Comparison of Error from Integration Methods |
 | ------------- | ------------- |
-| ![](images/Part 1 Graph.jpg?raw=true)  | ![](images/deformed3.png?raw=true) |
+| ![](../Lecture6-Solution/results/Comparison of Integration Methods.png?raw=true) | ![](../Lecture6-Solution/results/Comparison of Error Generated from Different Integration Methods.png?raw=true) |
 
 Results from Part 1
 ￹
