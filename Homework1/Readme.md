@@ -47,7 +47,9 @@ double exact(double x)            //function for defining dy/dx
 |0.3|1.336762|1.17828|1.158939|2.134285|
 |0.4|1.453584|1.136381|1.110628|1.91958|
 
-(d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx). 
+(d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file ![](../Lecture6-Solution/results/jak-HW1a.xlsx). 
+How does hyperlink work
+[](http://Lecture6-Solution/results/jak-HW1a.xlsx)
 
 #Part 2: Programming a Jello Cube
 #Part 3: Written Questions
