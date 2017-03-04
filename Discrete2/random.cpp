@@ -34,8 +34,8 @@ int main()
 	
 
 	//  2) - Change distribution types
-	std::uniform_real_distribution<> dist(0, 100);  // example of a uniform distribution
-	//std::normal_distribution<> dist(50,10);    // example of a normal distribution
+	//std::uniform_real_distribution<> dist(0, 100);  // example of a uniform distribution
+	std::normal_distribution<> dist(100,20);    // example of a normal distribution
 
 
 	auto generator = std::bind(dist, engine);
