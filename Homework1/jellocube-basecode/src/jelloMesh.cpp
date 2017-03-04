@@ -3,16 +3,16 @@
 #include <algorithm>
 
 // TODO 2/18/17 added some values just to see if it makes any difference
-double JelloMesh::g_structuralKs = 3622;
+double JelloMesh::g_structuralKs = 1622;
 double JelloMesh::g_structuralKd = 8.0; 
 double JelloMesh::g_attachmentKs = 0.0;
 double JelloMesh::g_attachmentKd = 0.0;
 //double JelloMesh::g_shearKs = 800.0;
-double JelloMesh::g_shearKs = 3222.0;
+double JelloMesh::g_shearKs = 1222.0;
 //double JelloMesh::g_shearKd = 15.50;
 double JelloMesh::g_shearKd = 7.50;
 //double JelloMesh::g_bendKs = 800.30;
-double JelloMesh::g_bendKs = 2622.30;
+double JelloMesh::g_bendKs = 622.30;
 //double JelloMesh::g_bendKd = 8.30;
 double JelloMesh::g_bendKd = 6.30;
 // penaltyKs of 600 works well for midpoint

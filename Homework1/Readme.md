@@ -49,12 +49,23 @@ double exact(double x)            //function for defining dy/dx
 
 (d) Plot the error percentages.  A graph showing the error percentages is shown above.  A complete set of results and errors is given in tab jak-HW1a of the file (../Lecture6-Solution/results/jak-HW1a.xlsx (https://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Lecture6-Solution/results/jak-HW1a.xlsx).
 
-(e) Vary the step size h=n  and plot the results for RK4 with 3 different values and the exact solution.  I used step size h=0.1, h=0.2 and h=0.5.  The resulting comparison is shown in the image below.
-![](../Lecture6-Solution/results/Comparison of RK4 Integration Intervals.png?raw=true)
+(e) Vary the step size h=n  and plot the results for RK4 with 3 different values and the exact solution.  I used step size h=0.1, h=0.2 and h=0.5.  The resulting comparison is shown in the below along with a comparison of the errors.
 
-A comparison of the errors for these three intervals is shown below.
-![](../Lecture6-Solution/results/Comparison of Error for RK4 Integration Intervals.png?raw=true)
+| Integration Intervals || Error for Integration Intervals |
+|------------------------||--------------------------------|
+|![](../Lecture6-Solution/results/Comparison of RK4 Integration Intervals.png?raw=true)||![](../Lecture6-Solution/results/Comparison of Error for RK4 Integration Intervals.png?raw=true)|
+(f) Analyze your results.
+RK4 is the most accurate and Euler is the least.  However, RK4 is the most computationaly intensive method and Euler requires the least computation.  As x gets large the small differences in accuracy get magnified resulting in much larger error for large values of x.  Smaller step sizes improve the accuracy of all methods.  RK4 is the most accurate because it takes into account changes in the function over the length of the interval being estimated and how fast those changes are occurring.  Euler mearly estimates based on the value of the function at the start of the interval.  Midpoint estimates based on the value at the start and the change at the midpoint.  RK4 allows for better estimate of changes during the course of the interval.
+
+When it came time to try multiple intervals I initially ran my program with .1, .05, and .001.  The difference in the errors was orders of magnitude.  The magnitude of the errors was very, very small.  The .1 interval reached magnitudes 0.00026236 while the .05 interval reached 0.0000019487 and the .001 reached 0.00000000000027898.  It was interesting to me that all of these ran on my laptop without a noticeable difference in run time from the original program which just had a single loop and a maximum interval of .1.  I realize when the integration is being performed for a simulation with many objects moving in the scenario it requires exponentially more processing power both to move the objects and to account for collisions.  So I wondered what happened to the error if I reduced the integration interval.  Therefore, I ran the same code after modifying the intervals to be .1, .2 and .5.  I suppose I could have tried to get sophisticated and create a GUI to prompt for parameters such as the output file name and the intervals which would make this more versatile.  I then created graphs for the exact solution plus the RK4 integration for these three intervals.  Even at an interval of .5 the error only reached 3.4194% in the range of 0 to 10 using RK4 estimation.  I can see why, depending on the specific simulation needs, a less precise integration estimation which is also computationally less expense can be very appropriate.
+
 #Part 2: Programming a Jello Cube
+I implemented all three integration methods.  While I initially had difficulty finding spring constants for Euler which would not make the cube fly apart, I eventually found some.  On the way I captured some interesting videe, such as https://youtu.be/-CQVXKcSMTE.  I found ways that unexpected results could look like something different, https://www.youtube.com/watch?v=oWsiQSNCgCQ.  This was my first attempt to create video other than with a camcorder and it was interesting.
+
+It took some trial and error, but I implemented spring forces including spring damping. I then worked on collision and penetration detection first with the floor and then with a single cylinder half embedded in the floor.  Figuring out how to detect and react to the cylinder also resulted in some amusing video https://youtu.be/wHofAiOWbig.  After that implementing a sphere seemed straight forward. I could not figure out how to position the sphere off the origin so the video https://youtu.be/0kWteKsEsZw is a little dull, but the second drop is with Euler integration. 
+
+I implemented shear and bend springs.  Since I am in the habit, I made a short video https://youtu.be/HptVgqDrLjs showing these as well.
+
 #Part 3: Written Questions
 1. What is the effect of the Ks and Kd parameters on the jello?  Ks is the spring constant from Hook's Law and represents how stiff or how elastic the spring is.  In the case of the jello, higher Ks made stiffer jello just like adding more gelatin will do when cooking jello.  Kd is the damping force that decreases the spring force over time.  Decreasing Kd will increase the time required for the spring to return to equilibrium.  Decreasing Kd in the project increases the time for the jello to settle down and stop wobbling.  
 2. Wat are the benefits and the drawbacks of the collision system used here?  What are some different ways in which it could be improved?  

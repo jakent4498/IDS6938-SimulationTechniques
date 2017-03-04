@@ -15,7 +15,9 @@
 
 JelloMesh theJello;
 Camera theCamera;
-World theWorld("../worlds/ground goofy.xml");
+World theWorld("../worlds/ground shear.xml");
+//World theWorld("../worlds/sphere.xml");
+//World theWorld("../worlds/ground goofy.xml");
 //World theWorld("../worlds/ground.xml");
 //World theWorld("../worlds/cylinder.xml");
 mmc::FpsTracker theFpsTracker;
