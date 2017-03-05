@@ -1,4 +1,4 @@
-- #Homework 1 : The Jello Cube (Continuous Simulation Assignment
+#Homework 1 : The Jello Cube (Continuous Simulation Assignment
 ## IDS6938-Simulation Techniques - [University of Central Florida](http://www.ist.ucf.edu/grad/)
 
 
@@ -64,7 +64,11 @@ I implemented all three integration methods.  While I initially had difficulty f
 
 It took some trial and error, but I implemented spring forces including spring damping. I then worked on collision and penetration detection first with the floor and then with a single cylinder half embedded in the floor.  Figuring out how to detect and react to the cylinder also resulted in some amusing video https://youtu.be/wHofAiOWbig.  After that implementing a sphere seemed straight forward. I could not figure out how to position the sphere off the origin so the video https://youtu.be/0kWteKsEsZw is a little dull, but the second drop is with Euler integration. 
 
-I implemented shear and bend springs.  Since I am in the habit, I made a short video https://youtu.be/HptVgqDrLjs showing these as well.
+I implemented shear and bend springs.  Since I am in the habit, I made a short video https://youtu.be/HptVgqDrLjs showing these as well.  Then I made a more interesting scene by combining the sphere and a cylinder https://www.youtube.com/watch?v=ywd8XUog0QI.  I posted my videos to YouTube and I also created one with two jello cubes with obviously different spring constants https://www.youtube.com/watch?v=5IPBego3-wQ.  The blue cube has Ks = 3666 but the red cube has Ks = 366.
+
+At that point having set up a completely separate directory so I would not break anything I had done above, I added a third cube and did some comparisons.  First I compared different spring constants.  Then I tried different integration methods in the same output.  Finally I ran the simulation with different integration methods at a variety of different intervals based on the intervals from part 1.  Euler integration with an interval of 0.005 looks good in my opinion.  I am working on concatenating all of the files and creating a YouTube video that might be interesting to someone outside of this class.  These are in Homework1b directory and I am going to attempt to commit and push it.
+
+Video editing is not for the faint of heart.  I have managed to stitch together four videos using various parameters with three different cubes each showing a different effect.  The text introductions are not as long or as smooth as I would like, but I have learned a lot about ffmpeg.  I have learned a bit about YouTube as well.  Final video is https://www.youtube.com/watch?v=D9D-b_CEmnw.
 
 #Part 3: Written Questions
 1. What is the effect of the Ks and Kd parameters on the jello?  Ks is the spring constant from Hook's Law and represents how stiff or how elastic the spring is.  In the case of the jello, higher Ks made stiffer jello just like adding more gelatin will do when cooking jello.  Kd is the damping force that decreases the spring force over time.  Decreasing Kd will increase the time required for the spring to return to equilibrium.  Decreasing Kd in the project increases the time for the jello to settle down and stop wobbling.  
@@ -77,3 +81,9 @@ I implemented shear and bend springs.  Since I am in the habit, I made a short v
 Based on the comments of my children the jello behaves realistically.  I find realism limited by the lack of friction in the model.  If the jello is impacting with a slick surface, including wet counter tops or wet plastic balls, then it acts a lot like the jello in the model.  If the jello is impacting s wooden object then the lack of friction in the model will be more apparent.  This could be solved by implementing friction.  I eventually found spring constants to work for RK4, midpoint, and Euler integration.  Once I found constants for Euler, I found that method to be more realistic than the others for the jello I make.  My jello tends to be wobbly because my children like to play with it.
 5. How would you model and simulate water (in terms of a continuous simulation)?
 I think water could be modeled as particles with very small spring forces between the particles.  Water will break apart quickly so Ks would need to be relatively small.
+
+#Conclusion
+Once I was able to follow the existing code, or at least portions of it, this became a very interesting assignment.  I enjoy doing comparisons and this gave a means to visualize the different mathematical methods.  I found the different possibilities a little addictive and I wish I could spend more time trying other possibilities.  I also learned a variety of new tools while working on this assignment.  The final composite video is available https://youtu.be/D9D-b_CEmnw.
+
+####References
+http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
