@@ -21,8 +21,8 @@ JelloMesh3 theJello3;
 
 Camera theCamera;
 //World theWorld("../worlds/ground goofy.xml");
-World theWorld("../worlds/ground-longcylinder.xml");
-//World theWorld("../worlds/cylinder.xml");
+//World theWorld("../worlds/ground-longcylinder.xml");
+World theWorld("../worlds/cylinder.xml");
 mmc::FpsTracker theFpsTracker;
 
 // UI Helpers
@@ -200,9 +200,9 @@ void onTimerCb(int value)
    glutTimerFunc(100, onTimerCb, 0);
    if (isRunning) 
    {
-	   theJello1.Update(0.05, theWorld);		// midpoint
-//	   theJello2.Update(0.05, theWorld);		// Euler
-	   theJello3.Update(0.05, theWorld);		// RK4
+	   theJello1.Update(0.01, theWorld);		// midpoint
+	   theJello2.Update(0.01, theWorld);		// Euler
+	   theJello3.Update(0.01, theWorld);		// RK4
 	   if (isRecording) grabScreen();
    }
 
