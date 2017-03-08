@@ -18,10 +18,10 @@ int main()
 	std::random_device rd;
 
 	// 1) Change random number generators
-	std::mt19937_64 engine(rd());
+	//std::mt19937_64 engine(rd());
 	//std::knuth_b engine(rd());
 	//std::minstd_rand engine(rd());
-	//std::ranlux48 engine(rd());
+	std::ranlux48 engine(rd());
 
 
 	// Another seed intialization routine (this is just here for future reference for you.)
@@ -34,8 +34,8 @@ int main()
 	
 
 	//  2) - Change distribution types
-	//std::uniform_real_distribution<> dist(0, 100);  // example of a uniform distribution
-	std::normal_distribution<> dist(100,20);    // example of a normal distribution
+	std::uniform_real_distribution<> dist(0, 100);  // example of a uniform distribution
+	//std::normal_distribution<> dist(100,20);    // example of a normal distribution
 
 
 	auto generator = std::bind(dist, engine);
