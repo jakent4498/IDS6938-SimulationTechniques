@@ -1,4 +1,4 @@
-int size = 0;  //TODO
+int size = 16;  //TODO 3/11 - JAK setting to 4 to see if it compiles and solve runtime issue
 Eigen::MatrixXf TransitionMatrix(size, size);
 Eigen::VectorXf v(size);
 
