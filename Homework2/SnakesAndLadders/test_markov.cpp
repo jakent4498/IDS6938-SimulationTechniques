@@ -24,7 +24,8 @@ int main(){
 
 	
    // TODO add Markov vector - Matrix multiplication
-
+	std::cout << "Transition is " << std::endl << TransitionMatrix << std::endl;
+	std::cout << "v is " << std::endl;
 
 	std::cout <<  v << std::endl;
 	//myfile << v << std::endl;  //this is just a sample, becareful how you print to file so you can mine useful stats

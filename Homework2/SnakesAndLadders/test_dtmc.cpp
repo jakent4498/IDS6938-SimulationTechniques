@@ -33,7 +33,7 @@ int main() {
 		
 		//TODO (add DTMC, and histogram lines.)
 		// JAK adding a call to discreteMC, but not sure the right call
-		discreteMC.cbegin();
+//		discreteMC.assign(0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1);
 		std::cout << "I got here" << std::endl;
 
 		// Code if you wanted to print out results at each step
