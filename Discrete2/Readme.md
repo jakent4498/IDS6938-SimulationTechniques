@@ -17,3 +17,5 @@ Therefore, I am taking the values of the two end points and summing them in R st
 
 I am then looking at how to do a comparison with the uniform distribution.  How do I know that the uniform distribution in R is any more uniform than any of these?  Of course, a purely uniform distribution of 100 numbers in 100,000 picks would be 1,000 of each number.  I shoud be able to create that as a matrix and do a comparison.
 
+Well, I created that matrix, but I am still not sure about doing the comparison.
+

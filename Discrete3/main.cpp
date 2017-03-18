@@ -19,7 +19,7 @@ int main(){
   double T = 8.5;
   
   //simulate discrete time Markov Chain
-  unsigned int N = 100000;
+  unsigned int N = 10;
   std::map<int, int> hist;
   std::vector<int> discreteMC;
   for (unsigned int i = 0; i < N; ++i){
