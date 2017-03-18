@@ -31,7 +31,8 @@ int main(){
 	//DTMC(v, 1, 6);
  // std::vector<int> DTMC (Eigen::MatrixXf, int, int);
 	std::vector<int> discreteMC;
-	discreteMC = DTMC(TransitionMatrix, 1, 1);
+	//discreteMC = DTMC(TransitionMatrix, 1, 1);
+	DTMC(TransitionMatrix, 1, 1);
 
 	std::cout << "v2 is " << std::endl;
 	for (auto elem : discreteMC) std::cout << elem << std::endl;
