@@ -16,10 +16,12 @@ void SetTransitionMatrix()
 
 	//TODO
 	// How to load the Transition Matrix
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i <= size; i++)
 	{
-		int jstart = i;
-		int jstop = i + 6;
+		// Does the 0 row in the matrix count as being on the board?
+		int jstart = i + 1;
+//		int jstart = i;
+		int jstop = jstart + 6;
 		if (jstop >= size) jstop = size;
 		
 
@@ -33,6 +35,8 @@ void SetTransitionMatrix()
 			//if (i == 0 && j == 2) TransitionMatrix(i, j) = 14;
 		}
 	}
+// If the 0 row is not on the board then need to stay on the board at the last row
+	TransitionMatrix(size-1, size-1) = 1;
 
 
 }
