@@ -79,10 +79,10 @@ void MM1_Queue::initialize()
 		// JAK set on 3/19 to see effect
       expected_server_utilization_ = 0.5;
       expected_idle_prob_ = 0.6;
-      expected_queue_length_ = 100.0;
-      expected_number_customers_ = 100000.0;
+      expected_queue_length_ = 7.0;
+      expected_number_customers_ = 100.0;
       expected_waiting_time_ = 5.0;
-//      expected_response_time_ = 10.0;
+      expected_response_time_ = 0.0004;
       // ------------------------------------------------
 
       rnd_arrival.set_rate(lambda_);

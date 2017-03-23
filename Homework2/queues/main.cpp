@@ -30,7 +30,8 @@ int main(int argc, char* argv[])
    int next = 0;
 //   test_random_number_generator();
 
-   for (int cur_lambda = 3; cur_lambda < 34; cur_lambda++)
+//   for (int cur_lambda = 3; cur_lambda < 34; cur_lambda++)
+   for (int cur_lambda = 3; cur_lambda < 6; cur_lambda++)
    {
       
 	   //TODO Create MM1_Queue objects to capture the airport senario.
@@ -40,6 +41,8 @@ int main(int argc, char* argv[])
 	   quCheckin.set_mu(53);
 	   quCheckin.set_lambda(cur_lambda);
 	   quCheckin.autogenerate_new_arrivals(true);
+	   quCheckin.set_seed(3.4, 5.7);
+	   quCheckin.initialize();
 	   std::cout << "Set mu to 53" << std::endl;
 
 
@@ -51,36 +54,49 @@ int main(int argc, char* argv[])
 
 	   MM1_Queue quTSA2;
 	   quTSA2.set_mu(20);
+	   quTSA2.set_lambda(cur_lambda);
+	   quTSA2.autogenerate_new_arrivals(false);
+	   quTSA2.initialize();
 
 	   MM1_Queue quTSA3;
 	   quTSA3.set_mu(20);
+	   quTSA3.set_lambda(cur_lambda);
+	   quTSA3.autogenerate_new_arrivals(false);
+	   quTSA3.initialize();
 
 	   MM1_Queue quBoard;
-	   quBoard.set_mu(20);
+	   quBoard.set_mu(80);
+	   quBoard.set_lambda(cur_lambda);
+	   quBoard.autogenerate_new_arrivals(false);
+	   quBoard.initialize();
 
 
-   for (quCheckin.initialize();
+   for (int i=0;
 		//TODO: add is_within_error_range check
-	   quCheckin.is_within_error_range(0.002)
-	   ;quCheckin.add_external_arrival())
+	   quCheckin.is_within_error_range(0.002) &&
+	   i < 100
+	   ;i++)
    {
-	   Customer cust  = quCheckin.process_next_event();    // =  TODO: process next event;
+	   Customer cust = quCheckin.process_next_event();    // =  TODO: process next event;
 	   Customer cust2 = quTSA1.process_next_event();   // =  TODO: process next event;
 	   Customer cust3 = quTSA2.process_next_event();   // =  TODO: process next event;
 	   Customer cust4 = quTSA3.process_next_event();   // =  TODO: process next event;
 	   Customer cust5 = quBoard.process_next_event();	// JAK added 3/19 for boarding customer
 	   //TODO: one more process_next_event for the last object.
 	   
-	   // JAK 3/19 have customers but what do they do
+	   // JAK 3/19 have customers but what do they don
 	   // Try setting the id to next and then how to add them to quCheckIn?
 	   //cust.set_id(next);
-	   std::cout << "cur_lambda = " << cur_lambda << std::endl;
+	   std::cout << "cur_lambda = " << cur_lambda << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
+	   std::cout << "get_mean_response_time " << quCheckin.get_mean_response_time() << "get_expected_response_time = " << quCheckin.get_expected_response_time() << std::endl;
+	   std::cout << "get_mean_number_customers " << quCheckin.get_mean_number_customers() << "get_expected_number_customers " << quCheckin.get_expected_number_customers() << std::endl;
 /*		   for (int myi=1; myi < 10; myi++) {
 			   std::cout << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
-			   cust = quCheckin.get_next_customer();
+			   quCheckin.process_next_event();
+//			   quCheckin.add_external_arrival();q
 		   }
-	  // quCheckin.add_external_arrival();		// how do I show cust just arrived at queue?
-*/
+*/	  // quCheckin.add_external_arrival();		// how do I show cust just arrived at queue?
+
        if (cust.get_type() == Customer::COMPLETED())
        {
           switch(next)
@@ -94,12 +110,12 @@ int main(int argc, char* argv[])
                  break;
             case 1:
 				//TODO add_external_arrival() for your security gates;
-				cust3 = cust;
+				quTSA2.add_external_arrival();
 				std::cout << "In cust3" << std::endl;
 				break;
             case 2:
                 //TODO add_external_arrival() for your security gates;
-				cust4 = cust;
+				quTSA3.add_external_arrival();
 				std::cout << "In cust4" << std::endl;
 				break;
           }
