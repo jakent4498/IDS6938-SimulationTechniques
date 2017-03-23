@@ -17,11 +17,13 @@ int main()
 	//use a random device
 	std::random_device rd;
 
+
 	// 1) Change random number generators
 	//std::mt19937_64 engine(rd());
 	//std::knuth_b engine(rd());
-	//std::minstd_rand engine(rd());
-	std::ranlux48 engine(rd());
+	std::minstd_rand engine(rd());
+	//std::ranlux48 engine(rd());
+	
 
 
 	// Another seed intialization routine (this is just here for future reference for you.)
@@ -34,24 +36,35 @@ int main()
 	
 
 	//  2) - Change distribution types
-	std::uniform_real_distribution<> dist(0, 100);  // example of a uniform distribution
+	std::uniform_real_distribution<> dist(0, 1);  // example of a uniform distribution
 	//std::normal_distribution<> dist(100,20);    // example of a normal distribution
-
+	//std::exponential_distribution<> dist(1 / 1);	// example of an exponential distribution
+	//std::poisson_distribution<> dist(20);	// example of a poisson distribution
+	//std::lognormal_distribution<> dist(0.0, 1.0); // example of lognormal distribution
+	//std::chi_squared_distribution<double> dist(20); // examplel of chi_squared distribution
 
 	auto generator = std::bind(dist, engine);
 
 	// 3) Play with N
-	unsigned int N = 1000000;  // number of values generated
+	unsigned int N = 1000;  // number of values generated
 	double randomValue;
 	std::map<int, int> hist; //Counts of discrete values
 	std::vector<double> raw; //raw random values 
 
+	// Adding code to generate two random Values 
+	double randomV2;
+	std::map<int, int> hist2; // Second set of counts
+	std::vector<double> raw2; // second set of raw values
 
 	for (unsigned int i = 0; i < N; ++i) {
 		randomValue = generator();
-		
+		randomV2 = generator();
+
 		++hist[std::round(randomValue)]; // count the values
 		raw.push_back(randomValue);  //push the raw values
+
+		++hist2[std::round(randomV2)];
+		raw2.push_back(randomV2);
 	}
 
 	for (auto p : hist) {
@@ -68,23 +81,27 @@ int main()
 
 	// Print Results to File
 	std::ofstream myfile;
-	myfile.open("results_ranlux48-uniformN1000000.txt");
+	myfile.open("results_minstd_rand_2D-uniform2N1000.txt");
 	for (auto p : hist) {
 		myfile << std::fixed << std::setprecision(1) << std::setw(2)
 			<< p.first << "\t" << p.second  << std::endl;
 	}
 	myfile.close();
 
-	myfile.open("raw_results.txt");
-	for (auto p : raw) {
+	myfile.open("raw_results_minstd_rand_2D-uniform2N1000.txt");
+//	for (auto p : raw) {
+	for (int i=0; i<N;i++) {
+		double p = raw[i];
+		double p2 = raw2[i];
+
 		myfile << std::fixed << std::setprecision(5) << std::setw(2)
-			<< p << std::endl;
+			<< p << "," << p2 << std::endl;
 	}
 	myfile.close();
 
 
 	//if you choose to write useful stats here
-	myfile.open("useful_stats.txt");
+	myfile.open("useful_stats_minstd_rand_2D-uniform2N1000.txt");
 	double sum = std::accumulate(raw.begin(), raw.end(), 0.0);
 	double mean = sum / raw.size();
 	myfile << "mean: " << mean << std::endl;
