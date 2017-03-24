@@ -137,6 +137,8 @@ public:
 	/* this next method returns TRUE if the simulation is
 	   within the desired error range */
 	bool is_within_error_range(double err) const { 
+		double jak_rt = get_mean_response_time();
+//		std::cout << "mean_respose_time = " << jak_rt << std::endl;
          return abs(get_mean_response_time() - expected_response_time_) < err;
     };
 

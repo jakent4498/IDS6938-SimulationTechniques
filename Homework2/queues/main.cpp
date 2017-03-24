@@ -41,9 +41,9 @@ int main(int argc, char* argv[])
 	   quCheckin.set_mu(53);
 	   quCheckin.set_lambda(cur_lambda);
 	   quCheckin.autogenerate_new_arrivals(true);
-	   quCheckin.set_seed(3.4, 5.7);
 	   quCheckin.initialize();
-	   std::cout << "Set mu to 53" << std::endl;
+	   quCheckin.set_seed(1,rd());
+	   std::cout << "Set mu to 53 lamdba to " << cur_lambda << " Expected Response time = " << quCheckin.get_expected_response_time() << std::endl;
 
 
 	   MM1_Queue quTSA1;
@@ -51,31 +51,40 @@ int main(int argc, char* argv[])
 	   quTSA1.set_lambda(cur_lambda);
 	   quTSA1.autogenerate_new_arrivals(false);
 	   quTSA1.initialize();
+	   quTSA1.set_seed(rd(), rd());
+
 
 	   MM1_Queue quTSA2;
 	   quTSA2.set_mu(20);
 	   quTSA2.set_lambda(cur_lambda);
 	   quTSA2.autogenerate_new_arrivals(false);
 	   quTSA2.initialize();
+	   quTSA2.set_seed(rd(), rd());
 
 	   MM1_Queue quTSA3;
 	   quTSA3.set_mu(20);
 	   quTSA3.set_lambda(cur_lambda);
 	   quTSA3.autogenerate_new_arrivals(false);
 	   quTSA3.initialize();
+	   quTSA3.set_seed(rd(), rd());
 
 	   MM1_Queue quBoard;
 	   quBoard.set_mu(80);
 	   quBoard.set_lambda(cur_lambda);
 	   quBoard.autogenerate_new_arrivals(false);
 	   quBoard.initialize();
+	   quBoard.set_seed(rd(), rd());
 
 
    for (int i=0;
 		//TODO: add is_within_error_range check
-	   quCheckin.is_within_error_range(0.002) &&
-	   i < 100
-	   ;i++)
+//	   !quCheckin.is_within_error_range(0.002) ||
+//	   !quTSA1.is_within_error_range(0.002) ||
+	//   !quTSA2.is_within_error_range(0.002) ||
+	  // !quTSA3.is_within_error_range(0.002) ||
+//	   !quBoard.is_within_error_range(0.002) 
+	i<10
+	;i++)
    {
 	   Customer cust = quCheckin.process_next_event();    // =  TODO: process next event;
 	   Customer cust2 = quTSA1.process_next_event();   // =  TODO: process next event;
@@ -87,13 +96,14 @@ int main(int argc, char* argv[])
 	   // JAK 3/19 have customers but what do they don
 	   // Try setting the id to next and then how to add them to quCheckIn?
 	   //cust.set_id(next);
-	   std::cout << "cur_lambda = " << cur_lambda << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
+//	   cout << "i= " << i << endl;
+/*	   std::cout << "cur_lambda = " << cur_lambda << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
 	   std::cout << "get_mean_response_time " << quCheckin.get_mean_response_time() << "get_expected_response_time = " << quCheckin.get_expected_response_time() << std::endl;
 	   std::cout << "get_mean_number_customers " << quCheckin.get_mean_number_customers() << "get_expected_number_customers " << quCheckin.get_expected_number_customers() << std::endl;
-/*		   for (int myi=1; myi < 10; myi++) {
+		   for (int myi=1; myi < 10; myi++) {
 			   std::cout << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
 			   quCheckin.process_next_event();
-//			   quCheckin.add_external_arrival();q
+//			   quCheckin.add_external_arrival();
 		   }
 */	  // quCheckin.add_external_arrival();		// how do I show cust just arrived at queue?
 
@@ -104,19 +114,19 @@ int main(int argc, char* argv[])
             case 0:
 				//TODO add_external_arrival() for your security gates;
 				quTSA1.add_external_arrival();
-				std::cout << "In case 0 quCheckin = " << quCheckin.get_current_queue_size() << "quTSA1= " << quTSA1.get_current_queue_size() << std::endl;
+//				std::cout << "In case 0 quCheckin = " << quCheckin.get_current_queue_size() << "quTSA1= " << quTSA1.get_current_queue_size() << std::endl;
 				//cust2.set_arrival(1.0);
 				//quTSA1.process_next_event()
                  break;
             case 1:
 				//TODO add_external_arrival() for your security gates;
 				quTSA2.add_external_arrival();
-				std::cout << "In cust3" << std::endl;
+//				std::cout << "In cust3" << std::endl;
 				break;
             case 2:
                 //TODO add_external_arrival() for your security gates;
 				quTSA3.add_external_arrival();
-				std::cout << "In cust4" << std::endl;
+//				std::cout << "In cust4" << std::endl;
 				break;
           }
           next++;
@@ -135,7 +145,9 @@ int main(int argc, char* argv[])
 
 
    //TODO Output statistics airport senario.
+   quCheckin.plot_results_output();
 
+   quTSA1.output(); std::cout << "*****" << endl;
 
 
    //**************************************************************************
