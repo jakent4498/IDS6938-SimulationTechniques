@@ -19,9 +19,9 @@ int main()
 
 
 	// 1) Change random number generators
-	//std::mt19937_64 engine(rd());
+	std::mt19937_64 engine(rd());
 	//std::knuth_b engine(rd());
-	std::minstd_rand engine(rd());
+	//std::minstd_rand engine(rd());
 	//std::ranlux48 engine(rd());
 	
 
@@ -81,14 +81,14 @@ int main()
 
 	// Print Results to File
 	std::ofstream myfile;
-	myfile.open("results_minstd_rand_2D-uniform2N1000.txt");
+	myfile.open("results_mt19937_64_2D-uniform2N1000.txt");
 	for (auto p : hist) {
 		myfile << std::fixed << std::setprecision(1) << std::setw(2)
 			<< p.first << "\t" << p.second  << std::endl;
 	}
 	myfile.close();
 
-	myfile.open("raw_results_minstd_rand_2D-uniform2N1000.txt");
+	myfile.open("raw_results_mt19937_64_2D-uniform2N1000.txt");
 //	for (auto p : raw) {
 	for (int i=0; i<N;i++) {
 		double p = raw[i];
@@ -101,7 +101,7 @@ int main()
 
 
 	//if you choose to write useful stats here
-	myfile.open("useful_stats_minstd_rand_2D-uniform2N1000.txt");
+	myfile.open("useful_stats_mt19937_64_2D-uniform2N1000.txt");
 	double sum = std::accumulate(raw.begin(), raw.end(), 0.0);
 	double mean = sum / raw.size();
 	myfile << "mean: " << mean << std::endl;
