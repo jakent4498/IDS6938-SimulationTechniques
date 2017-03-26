@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 //   test_random_number_generator();
 
 //   for (int cur_lambda = 3; cur_lambda < 34; cur_lambda++)
-   for (int cur_lambda = 3; cur_lambda < 6; cur_lambda++)
+   for (int cur_lambda = 3; cur_lambda < 8; cur_lambda++)
    {
       
 	   //TODO Create MM1_Queue objects to capture the airport senario.
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	   quCheckin.set_lambda(cur_lambda);
 	   quCheckin.autogenerate_new_arrivals(true);
 	   quCheckin.initialize();
-	   quCheckin.set_seed(1,rd());
+	   quCheckin.set_seed(1, rd());
 	   std::cout << "Set mu to 53 lamdba to " << cur_lambda << " Expected Response time = " << quCheckin.get_expected_response_time() << std::endl;
 
 
@@ -50,40 +50,40 @@ int main(int argc, char* argv[])
 	   quTSA1.set_mu(20);
 	   quTSA1.set_lambda(cur_lambda);
 	   quTSA1.autogenerate_new_arrivals(false);
-	   quTSA1.initialize();
 	   quTSA1.set_seed(rd(), rd());
+	   quTSA1.initialize();
 
 
 	   MM1_Queue quTSA2;
 	   quTSA2.set_mu(20);
 	   quTSA2.set_lambda(cur_lambda);
 	   quTSA2.autogenerate_new_arrivals(false);
-	   quTSA2.initialize();
 	   quTSA2.set_seed(rd(), rd());
+	   quTSA2.initialize();
 
 	   MM1_Queue quTSA3;
 	   quTSA3.set_mu(20);
 	   quTSA3.set_lambda(cur_lambda);
 	   quTSA3.autogenerate_new_arrivals(false);
-	   quTSA3.initialize();
 	   quTSA3.set_seed(rd(), rd());
+	   quTSA3.initialize();
 
 	   MM1_Queue quBoard;
 	   quBoard.set_mu(80);
 	   quBoard.set_lambda(cur_lambda);
 	   quBoard.autogenerate_new_arrivals(false);
-	   quBoard.initialize();
 	   quBoard.set_seed(rd(), rd());
+	   quBoard.initialize();
 
 
    for (int i=0;
 		//TODO: add is_within_error_range check
-//	   !quCheckin.is_within_error_range(0.002) ||
-//	   !quTSA1.is_within_error_range(0.002) ||
-	//   !quTSA2.is_within_error_range(0.002) ||
+	   !quCheckin.is_within_error_range(0.002) ||
+	   !quTSA1.is_within_error_range(0.002) ||
+	   !quTSA2.is_within_error_range(0.002) //||
 	  // !quTSA3.is_within_error_range(0.002) ||
 //	   !quBoard.is_within_error_range(0.002) 
-	i<10
+//	i<20			// Allow queue to get past start up where it is outside error range
 	;i++)
    {
 	   Customer cust = quCheckin.process_next_event();    // =  TODO: process next event;
@@ -96,7 +96,14 @@ int main(int argc, char* argv[])
 	   // JAK 3/19 have customers but what do they don
 	   // Try setting the id to next and then how to add them to quCheckIn?
 	   //cust.set_id(next);
-//	   cout << "i= " << i << endl;
+/*	   cout << "i= " << i << " Expected Response time = " << quCheckin.get_expected_response_time();
+	   cout << " mean resonse time = " << quCheckin.get_mean_response_time();
+	   cout << " current time = " << quCheckin.get_current_time();
+	   cout << " queue size = " << quCheckin.get_current_queue_size() << "\t";
+	   if (quCheckin.is_within_error_range(0.002))
+		   cout << "within error range" << endl;
+	   else cout << "NOT within error range" << endl;
+//	   cout << " idle prob = " << quCheckin.get_idle_prob() << endl;
 /*	   std::cout << "cur_lambda = " << cur_lambda << "   in loop length of Checkin = " << quCheckin.get_current_queue_size() << std::endl;
 	   std::cout << "get_mean_response_time " << quCheckin.get_mean_response_time() << "get_expected_response_time = " << quCheckin.get_expected_response_time() << std::endl;
 	   std::cout << "get_mean_number_customers " << quCheckin.get_mean_number_customers() << "get_expected_number_customers " << quCheckin.get_expected_number_customers() << std::endl;
@@ -114,6 +121,7 @@ int main(int argc, char* argv[])
             case 0:
 				//TODO add_external_arrival() for your security gates;
 				quTSA1.add_external_arrival();
+				cust2.set_type(Customer::ARRIVAL());
 //				std::cout << "In case 0 quCheckin = " << quCheckin.get_current_queue_size() << "quTSA1= " << quTSA1.get_current_queue_size() << std::endl;
 				//cust2.set_arrival(1.0);
 				//quTSA1.process_next_event()
@@ -121,11 +129,14 @@ int main(int argc, char* argv[])
             case 1:
 				//TODO add_external_arrival() for your security gates;
 				quTSA2.add_external_arrival();
-//				std::cout << "In cust3" << std::endl;
+				cust3.set_type(Customer::ARRIVAL());
+				//				std::cout << "In cust3" << std::endl;
 				break;
             case 2:
                 //TODO add_external_arrival() for your security gates;
 				quTSA3.add_external_arrival();
+//				cust4.set_arrival(quTSA3.get_current_time());
+				cust4.set_type(Customer::ARRIVAL()); 
 //				std::cout << "In cust4" << std::endl;
 				break;
           }
@@ -137,7 +148,7 @@ int main(int argc, char* argv[])
 		   //TODO add_external_arrival(); on your final boarding MM1_Queue object
 		   // JAK adding 3/19
 		   quBoard.add_external_arrival();
-		   cust5.set_arrival(1.0);
+//		   cust5.set_arrival(quBoard.get_current_time());
 		   cust5.set_type(Customer::ARRIVAL());
        }
    }
