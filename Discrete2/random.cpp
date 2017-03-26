@@ -19,8 +19,8 @@ int main()
 
 
 	// 1) Change random number generators
-	std::mt19937_64 engine(rd());
-	//std::knuth_b engine(rd());
+	//std::mt19937_64 engine(rd());
+	std::knuth_b engine(rd());
 	//std::minstd_rand engine(rd());
 	//std::ranlux48 engine(rd());
 	
@@ -37,16 +37,16 @@ int main()
 
 	//  2) - Change distribution types
 	//std::uniform_real_distribution<> dist(0, 1);  // example of a uniform distribution
-	std::normal_distribution<> dist(100,20);    // example of a normal distribution
+	//std::normal_distribution<> dist(100,20);    // example of a normal distribution
 	//std::exponential_distribution<> dist(1 / 1);	// example of an exponential distribution
 	//std::poisson_distribution<> dist(20);	// example of a poisson distribution
-	//std::lognormal_distribution<> dist(0.0, 1.0); // example of lognormal distribution
+	std::lognormal_distribution<> dist(0.0, 1.0); // example of lognormal distribution
 	//std::chi_squared_distribution<double> dist(20); // examplel of chi_squared distribution
 
 	auto generator = std::bind(dist, engine);
 
 	// 3) Play with N
-	unsigned int N = 100000;  // number of values generated
+	unsigned int N = 10000;  // number of values generated
 	double randomValue;
 	std::map<int, int> hist; //Counts of discrete values
 	std::vector<double> raw; //raw random values 
@@ -81,28 +81,28 @@ int main()
 
 	// Print Results to File
 	std::ofstream myfile;
-	myfile.open("results_mt19937_64-normalN100000.txt");
+	myfile.open("results_knuth_b-lognormN10000.txt");
 	for (auto p : hist) {
 		myfile << std::fixed << std::setprecision(1) << std::setw(2)
 			<< p.first << "\t" << p.second  << std::endl;
 	}
 	myfile.close();
 
-	myfile.open("raw_results_mt19937_64-normalN100000.txt");
+	myfile.open("raw_results_knuth_b-lognormN10000.txt");
 //	for (auto p : raw) {
 	for (int i=0; i<N;i++) {
 		double p = raw[i];
 		double p2 = raw2[i];
 
 		myfile << std::fixed << std::setprecision(5) << std::setw(2)
-			//			<< p << "," << p2 << std::endl;
+			//<< p << "," << p2 << std::endl;
 			<< p << std::endl;
 	}
 	myfile.close();
 
 
 	//if you choose to write useful stats here
-	myfile.open("useful_stats_mt19937_64-normalN100000.txt");
+	myfile.open("useful_stats_knuth_b-lognormN10000.txt");
 	double sum = std::accumulate(raw.begin(), raw.end(), 0.0);
 	double mean = sum / raw.size();
 	myfile << "mean: " << mean << std::endl;
