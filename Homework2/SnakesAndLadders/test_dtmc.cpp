@@ -35,13 +35,13 @@ int main() {
 		
 		//TODO (add DTMC, and histogram lines.)
 		// JAK adding a call to discreteMC, but not sure the right call
-//		discreteMC.assign(0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1);
 		std::cout << "Starting loop i=" << i << std::endl;
 		discreteMC = DTMC(TransitionMatrix, 9, 0);
 
 		// Code if you wanted to print out results at each step
 		for (auto elem : discreteMC)
-			std::cout << elem << std::endl;
+			std::cout << elem <<", ";
+		std::cout << std::endl;
 
 	}
 	//Returns an array discreteMC with the states at each step of the discrete-time Markov Chain

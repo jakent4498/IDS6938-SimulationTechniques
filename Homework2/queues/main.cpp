@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
    int next = 0;
 //   test_random_number_generator();
 
-//   for (int cur_lambda = 3; cur_lambda < 34; cur_lambda++)
-   for (int cur_lambda = 3; cur_lambda < 8; cur_lambda++)
+   for (int cur_lambda = 3; cur_lambda < 34; cur_lambda++)
+//   for (int cur_lambda = 3; cur_lambda < 8; cur_lambda++)
    {
       
 	   //TODO Create MM1_Queue objects to capture the airport senario.
@@ -41,30 +41,34 @@ int main(int argc, char* argv[])
 	   quCheckin.set_mu(53);
 	   quCheckin.set_lambda(cur_lambda);
 	   quCheckin.autogenerate_new_arrivals(true);
+	   quCheckin.set_file_names("checkin-queue.txt", "checkin-wait.txt", "checkin-service.txt");
 	   quCheckin.initialize();
 	   quCheckin.set_seed(1, rd());
-	   std::cout << "Set mu to 53 lamdba to " << cur_lambda << " Expected Response time = " << quCheckin.get_expected_response_time() << std::endl;
+	   std::cout << "Set  lamdba to " << cur_lambda << " Expected Response time = " << quCheckin.get_expected_response_time() << std::endl;
 
 
 	   MM1_Queue quTSA1;
 	   quTSA1.set_mu(20);
-	   quTSA1.set_lambda(cur_lambda);
+	   quTSA1.set_lambda(cur_lambda/3.0);
 	   quTSA1.autogenerate_new_arrivals(false);
+	   quTSA1.set_file_names("TSA1-queue.txt", "TSA1-wait.txt", "TSA1-service.txt");
 	   quTSA1.set_seed(rd(), rd());
 	   quTSA1.initialize();
 
 
 	   MM1_Queue quTSA2;
 	   quTSA2.set_mu(20);
-	   quTSA2.set_lambda(cur_lambda);
+	   quTSA2.set_lambda(cur_lambda/3.0);
 	   quTSA2.autogenerate_new_arrivals(false);
+	   quTSA2.set_file_names("TSA2-queue.txt", "TSA2-wait.txt", "TSA2-service.txt");
 	   quTSA2.set_seed(rd(), rd());
 	   quTSA2.initialize();
 
 	   MM1_Queue quTSA3;
 	   quTSA3.set_mu(20);
-	   quTSA3.set_lambda(cur_lambda);
+	   quTSA3.set_lambda(cur_lambda/3.0);
 	   quTSA3.autogenerate_new_arrivals(false);
+	   quTSA3.set_file_names("TSA3-queue.txt", "TSA3-wait.txt", "TSA3-service.txt");
 	   quTSA3.set_seed(rd(), rd());
 	   quTSA3.initialize();
 
@@ -72,6 +76,7 @@ int main(int argc, char* argv[])
 	   quBoard.set_mu(80);
 	   quBoard.set_lambda(cur_lambda);
 	   quBoard.autogenerate_new_arrivals(false);
+	   quBoard.set_file_names("board-queue.txt", "board-wait.txt", "board-service.txt");
 	   quBoard.set_seed(rd(), rd());
 	   quBoard.initialize();
 
@@ -80,9 +85,9 @@ int main(int argc, char* argv[])
 		//TODO: add is_within_error_range check
 	   !quCheckin.is_within_error_range(0.002) ||
 	   !quTSA1.is_within_error_range(0.002) ||
-	   !quTSA2.is_within_error_range(0.002) //||
-	  // !quTSA3.is_within_error_range(0.002) ||
-//	   !quBoard.is_within_error_range(0.002) 
+	   !quTSA2.is_within_error_range(0.002) ||
+	   !quTSA3.is_within_error_range(0.002) //||
+//	   !quBoard.is_within_error_range(0.002) ||
 //	i<20			// Allow queue to get past start up where it is outside error range
 	;i++)
    {
@@ -157,8 +162,10 @@ int main(int argc, char* argv[])
 
    //TODO Output statistics airport senario.
    quCheckin.plot_results_output();
-
    quTSA1.output(); std::cout << "*****" << endl;
+   quTSA2.output(); std::cout << "*****" << endl;
+   quTSA3.output(); std::cout << "*****" << endl;
+   quBoard.output(); std::cout << "*****" << endl;
 
 
    //**************************************************************************

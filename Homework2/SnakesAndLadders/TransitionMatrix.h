@@ -1,4 +1,4 @@
-int size = 12;  //TODO 3/11 - JAK setting to 4 to see if it compiles and solve runtime issue
+int size = 101;  //TODO 3/11 - JAK setting to 4 to see if it compiles and solve runtime issue 3/26 setting to full matrix
 Eigen::MatrixXf TransitionMatrix(size, size);
 Eigen::VectorXf v(size);
 // std::vector<int> v2(size);
@@ -36,7 +36,18 @@ void SetTransitionMatrix()
 		}
 	}
 // If the 0 row is not on the board then need to stay on the board at the last row
-	TransitionMatrix(size-1, size-1) = 1;
 
+	TransitionMatrix(size-1, size-1) = 1;
+	
+	for (int i1 = 0; i1 < size; i1++)
+	{
+		double rowsum = 0;
+		for (int j1 = 0; j1 < size; j1++) {
+			rowsum = rowsum + TransitionMatrix(i1, j1);
+		}
+		if (abs(rowsum - 1) > 0)
+			std::cout << "rowsum <> 1 rowsum = " << rowsum << "i = " << i1 << std::endl;
+	}
+	
 
 }
