@@ -29,7 +29,7 @@ int main(){
 		myfile << "P(" << i << "),";
 	myfile << "P("<< (size - 1) <<")" <<std::endl;
 	
-	std::cout << "Transition is " << std::endl << TransitionMatrix << std::endl;
+	//std::cout << "Transition is " << std::endl << TransitionMatrix << std::endl;
 	// TODO add Markov vector - Matrix multiplication
 	for (int i = 0; i < size; i++) {
 		std::cout << "i = " << i << " v is " << v.transpose() << std::endl;
@@ -41,7 +41,7 @@ int main(){
 	}
 
 
-	//myfile << v << std::endl;  //this is just a sample, becareful how you print to file so you can mine useful stats
+	//myfile << v << std::endl;  //this is just a sample, be careful how you print to file so you can mine useful stats
 	
 	myfile.close();
 

@@ -20,14 +20,14 @@ int main() {
 
 	// Print Results to File
 	std::ofstream myfile;
-	myfile.open("markov_results.txt");
+	myfile.open("dtmc_results.txt");
 
 	// Print out transition matrix for now
-	std::cout << "Transition is " << std::endl << TransitionMatrix << std::endl;
+//	std::cout << "Transition is " << std::endl << TransitionMatrix << std::endl;
 	int start = 0;
 
 	//simulate discrete time Markov Chain
-	unsigned int N = 2;
+	unsigned int N = 1000;
 	std::map<int, int> hist;
 	std::vector<int> discreteMC;
 
@@ -35,13 +35,18 @@ int main() {
 		
 		//TODO (add DTMC, and histogram lines.)
 		// JAK adding a call to discreteMC, but not sure the right call
-		std::cout << "Starting loop i=" << i << std::endl;
-		discreteMC = DTMC(TransitionMatrix, 9, 0);
+//		std::cout << "Starting loop i=" << i << std::endl;
+		discreteMC = DTMC(TransitionMatrix, ROLLS, 0);
 
+		int myi = 0;
 		// Code if you wanted to print out results at each step
-		for (auto elem : discreteMC)
-			std::cout << elem <<", ";
-		std::cout << std::endl;
+		for (auto elem : discreteMC) {
+			std::cout << elem << ", ";
+			myfile << elem << ", ";
+			if (elem < 100) myi++;
+		}
+		std::cout << std::endl << "myi = " << myi << std::endl;
+		myfile << myi << std::endl;
 
 	}
 	//Returns an array discreteMC with the states at each step of the discrete-time Markov Chain

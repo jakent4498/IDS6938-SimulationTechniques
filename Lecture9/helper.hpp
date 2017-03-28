@@ -20,7 +20,7 @@ Eigen::MatrixXf  mForces;
 
 bool loadGeometry() {
 	//Load Geometry.
-	int numberOfParticles = 1;
+	int numberOfParticles = 1;  // adjust if you want many
 
 	std::mt19937_64 rng;
 	// initialize the random number generator with time-dependent seed
@@ -40,12 +40,12 @@ bool loadGeometry() {
 
 	for (int i = 0; i < numberOfParticles; i++)
 	{
-		//mGeometry.col(i) << unif(rng) , unif(rng), 0.0f;
-		mGeometry.col(i) << 0.0, -8.0, 0.0f;
+		//mGeometry.col(i) << unif(rng) , unif(rng), 0.0f;   /// activate if you want many
+		mGeometry.col(i) << 0.0, -8.0, 0.0f;     /// activate if you only want one
 		mColors.col(i) << 1.0f, 1.0f, 0.0f, 1.0f;
 		mMasses.col(i) << 1.0f;
 		mForces.col(i) << 0.0f, 0.0f, 0.0f;
-		mVelocities.col(i) << 0.0f, 0.0f, 0.0f;
+		mVelocities.col(i) << 0.0f, 10.0f, 100.0f;
 	}
 
 	

@@ -6,7 +6,10 @@ library(ggplot2)
 library(reshape2)
 library(dplyr)
 setwd("C:/Users/jaken/OneDrive/Documents/Spring 2017 SimTech/IDS6938-SimulationTechniques/Homework2/SnakesAndLadders/output")
-markov <- read.csv("markov_results.txt", header=TRUE)
+#markov <- read.csv("null_markov_results.txt", header=TRUE)
+#markov <- read.csv("ladders_markov_results.txt", header=TRUE)
+#markov <- read.csv("sl_markov_results.txt", header=TRUE)
+markov <- read.csv("snakes_markov_results.txt", header=TRUE)
 row.names(markov) <- markov$RowName
 markov <- markov[,2:length(markov)]
 markov_matrix <- data.matrix(markov)

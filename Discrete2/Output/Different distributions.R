@@ -27,4 +27,4 @@ p5 <- ggplot(jakchisq) + geom_point(aes(x=jakchisq$x, y=jakchisq$count)) +
   xlab("Chi-squared") + ylab("")
 p6 <- ggplot(jaklognorm) + geom_point(aes(x=jaklognorm$x, y=jaklognorm$count)) +
   xlab("Lognormal") + ylab("")
-grid.arrange(p1,p2,p3,p4,p5,ncol=2)
+grid.arrange(p1,p2,p3,p4,p5,p6,ncol=3)
