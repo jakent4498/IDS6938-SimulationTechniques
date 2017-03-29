@@ -87,7 +87,7 @@ When a passanger arrives they have to wait in a queue to present their ID and ti
 
 * **(a) - 4pts:** To start create the senario in the figure above in *main.cpp*. Checkin will have a *mu* of 53 and accept new arrivals, the security gates will have a *mu* of 20, and will not accept new arrivials, boarding will have a *mu* of 80. You will have to set up  the appropriate *MM1_Queue* objects to capture the functionality above.
 * **(b) - 4pts:** You want to add a check that your process is within an error range *is_within_error_range(float)* where the error range will be 0.002. You also want to process the next event, and add an external arrival where marked.
-* **(c) - 3pts:** in *mm1_queue.cpp* : add code to caculate the expected results for: 
+* **(c) - 3pts:** in *mm1_queue.cpp* : add code to caculate the expected results for:
 | Metric | Checkin | TSA1 | TS2 | TSA3 | Boarding |
 |--------|--------|--------|--------|--------|--------|
 | expected_server_utilization | 0.622642 | 0.55 | 0.55 |  0.55 | 0.4125 |
@@ -95,7 +95,7 @@ When a passanger arrives they have to wait in a queue to present their ID and ti
 | expected queue length       | 1.02736  |0.672222 |0.672222 |0.672222|0.289628 |
 | expected number customers     | 1.65   |1.22222 |1.22222| 1.22222 | 0.702128 |
 | expected waiting time | 0.0311321 | 0.0611111 |0.0611111 | 0.0611111 |0.0087766  |
-| expected response time       | 0.05     | 0.111111 |0.111111| 0.111111 | 0.0212766       ||
+| expected response time       | 0.05     | 0.111111 |0.111111| 0.111111 | 0.0212766|
 
 
 *  **(d) - 4pts:** Write code to call the functions to output and generate data from the airport senario. 
