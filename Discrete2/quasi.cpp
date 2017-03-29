@@ -14,8 +14,10 @@
 
 # define DIM_MAX 2
 
-int dim_num = 1;
+int dim_num = 1;		// try different values here
+int dim_num2 = 2;
 float *r;
+float *r2;
 int seed;
 int seed_in;
 int seed_out;
@@ -27,6 +29,11 @@ int seed2_out;
 double getQuasiRandomNumber(int *seed)
 {
 	i4_sobol(dim_num, seed, r);
+	return r[0];
+}
+double getQuasiRandomNumber2(int *seed2)
+{
+	i4_sobol(dim_num2, seed2, r);
 	return r[0];
 }
 
@@ -47,17 +54,17 @@ int main()
 	std::random_device rd;
 	// Another seed intialization routine (this is just here for future reference for you.)
 	// initialize the random number generator with time-dependent seed
-	//uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+	uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 	//std::seed_seq ss{ uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed >> 32) };
 	// 2 different ways to get a random starting seed
 	seed = rd();
-	seed2 = rd();
-	//seed = ss;
+	seed2 = (rd() + timeSeed)/2;
+	//seed2 = timeSeed;
 
 
 
 	// 3) Play with N
-	unsigned int N = 100000;  // number of values generated
+	unsigned int N = 1000;  // number of values generated
 	double randomValue;
 	double randomV2;
 	std::map<int, int> hist; //Counts of discrete values
@@ -71,8 +78,9 @@ int main()
 		++hist[std::round(randomValue)]; // count the values
 		raw.push_back(randomValue);  //push the raw values
 	}
+
 	for (unsigned int i = 0; i < N; ++i) {
-		randomV2 = 0 + getQuasiRandomNumber(&seed);
+		randomV2 = 0 + getQuasiRandomNumber2(&seed2);
 		raw2.push_back(randomV2);
 	}
 
@@ -90,14 +98,14 @@ int main()
 
 	// Print Results to File
 	std::ofstream myfile;
-	myfile.open("histogram_sobol-2D-UniformN100000.txt");
+	myfile.open("9histogram_sobol-2D-1000.txt");
 	for (auto p : hist) {
 		myfile << std::fixed << std::setprecision(1) << std::setw(2)
 			<< p.first << "\t" << p.second << std::endl;
 	}
 	myfile.close();
 
-	myfile.open("raw_results_sobol-2D-UniformN100000.txt");
+	myfile.open("9raw_results_sobol-2D-UniformN1000.txt");
 	//	for (auto p : raw) {
 	for (int i = 0; i<N; i++) {
 		double p = raw[i];
@@ -110,7 +118,7 @@ int main()
 
 
 	//if you choose to write useful stats here
-	myfile.open("useful_stats_sobol-2D-UniformN100000.txt");
+	myfile.open("9useful_stats_sobol-2D-UniformN1000.txt");
 	double sum = std::accumulate(raw.begin(), raw.end(), 0.0);
 	double mean = sum / raw.size();
 	myfile << "mean: " << mean << std::endl;

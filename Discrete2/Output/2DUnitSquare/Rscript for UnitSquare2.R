@@ -5,7 +5,7 @@ setwd("C:/Users/jaken/OneDrive/Documents/Spring 2017 SimTech/IDS6938-SimulationT
 #
 # Generate plots of x,y values for different values of N and different random number generators
 # using the uniform distribution.  Uses gridExtra to combine the plots on to one chart
-(ggplot2)
+library(ggplot2)
 library(grid)
 library(gridExtra)
 jakdf1 <- read.csv("raw_results_ranlux48_2D-uniform2.txt", header=FALSE)
@@ -38,7 +38,7 @@ p33 <- ggplot(jakdf33) + geom_point(aes(x=jakdf33$V1, y=jakdf33$V2)) + xlab("knu
 #grid.arrange(p3,p13,p23,p33,p2,p12,p22,p32,p1,p11,p21,p31, ncol=4)
 jakdf41 <- read.csv("raw_results_sobol-2D-UniformN1000.txt", header=FALSE)
 jakdf42 <- read.csv("raw_results_sobol-2D-UniformN10000.txt", header=FALSE)
-jakdf43 <- read.csv("raw_results_sobol-2D-UniformN100000.txt", header=FALSE)
+jakdf43 <- read.csv("4raw_results_sobol-2D-UniformN500.txt", header=FALSE)
 p41 <- ggplot(jakdf41) + geom_point(aes(x=jakdf41$V1, y=jakdf41$V2)) + xlab("sobol") + ylab("N=1000")
 p42 <- ggplot(jakdf42) + geom_point(aes(x=jakdf42$V1, y=jakdf42$V2)) + xlab("sobol") + ylab("N=10000")
 p43 <- ggplot(jakdf43) + geom_point(aes(x=jakdf43$V1, y=jakdf43$V2)) + xlab("sobol") + ylab("N=100000")
