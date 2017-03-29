@@ -167,6 +167,48 @@ int main(int argc, char* argv[])
    quTSA3.output(); std::cout << "*****" << endl;
    quBoard.output(); std::cout << "*****" << endl;
 
+   // Get for writeup
+   std::cout << "For CHECKIN " << endl;
+   std::cout << "Expected server utilization: " << quCheckin.get_expected_server_utilization() << endl;
+   std::cout << "Expected idle prob: " << quCheckin.get_expected_idle_prob() << endl;
+   std::cout << "Expected queue length: " << quCheckin.get_expected_queue_length() << endl;
+   std::cout << "Expected number customers: " << quCheckin.get_expected_number_customers() << endl;
+   std::cout << "Expected waiting time: " << quCheckin.get_expected_waiting_time() << endl;
+   std::cout << "Expected response time: " << quCheckin.get_expected_response_time() << endl << endl;
+
+
+   std::cout << "For TSA1 " << endl;
+   std::cout << "Expected server utilization: " << quTSA1.get_expected_server_utilization() << endl;
+   std::cout << "Expected idle prob: " << quTSA1.get_expected_idle_prob() << endl;
+   std::cout << "Expected queue length: " << quTSA1.get_expected_queue_length() << endl;
+   std::cout << "Expected number customers: " << quTSA1.get_expected_number_customers() << endl;
+   std::cout << "Expected waiting time: " << quTSA1.get_expected_waiting_time() << endl;
+   std::cout << "Expected response time: " << quTSA1.get_expected_response_time() << endl << endl;
+
+   std::cout << "For TSA2 " << endl;
+   std::cout << "Expected server utilization: " << quTSA2.get_expected_server_utilization() << endl;
+   std::cout << "Expected idle prob: " << quTSA2.get_expected_idle_prob() << endl;
+   std::cout << "Expected queue length: " << quTSA2.get_expected_queue_length() << endl;
+   std::cout << "Expected number customers: " << quTSA2.get_expected_number_customers() << endl;
+   std::cout << "Expected waiting time: " << quTSA2.get_expected_waiting_time() << endl;
+   std::cout << "Expected response time: " << quTSA2.get_expected_response_time() << endl << endl;
+
+   std::cout << "For TSA3 " << endl;
+   std::cout << "Expected server utilization: " << quTSA3.get_expected_server_utilization() << endl;
+   std::cout << "Expected idle prob: " << quTSA3.get_expected_idle_prob() << endl;
+   std::cout << "Expected queue length: " << quTSA3.get_expected_queue_length() << endl;
+   std::cout << "Expected number customers: " << quTSA3.get_expected_number_customers() << endl;
+   std::cout << "Expected waiting time: " << quTSA3.get_expected_waiting_time() << endl;
+   std::cout << "Expected response time: " << quTSA3.get_expected_response_time() << endl << endl;
+
+   std::cout << "For BOARD " << endl;
+   std::cout << "Expected server utilization: " << quBoard.get_expected_server_utilization() << endl;
+   std::cout << "Expected idle prob: " << quBoard.get_expected_idle_prob() << endl;
+   std::cout << "Expected queue length: " << quBoard.get_expected_queue_length() << endl;
+   std::cout << "Expected number customers: " << quBoard.get_expected_number_customers() << endl;
+   std::cout << "Expected waiting time: " << quBoard.get_expected_waiting_time() << endl;
+   std::cout << "Expected response time: " << quBoard.get_expected_response_time() << endl << endl;
+
 
    //**************************************************************************
 
