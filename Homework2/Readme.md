@@ -100,7 +100,8 @@ When a passanger arrives they have to wait in a queue to present their ID and ti
 
 ##Part 4 - Implementing Extra Features (10 pts)
 
-I have implemented a 2D visualization in AnyLogic.  In the two D model the airport screeners turn red when they are in use and turn green when they are available.  ![](queues/output/model_capture2D2.png)
+I have implemented a 2D visualization in AnyLogic.  In the two D model the airport screeners turn red when they are in use and turn green when they are available.  
+![](./queues/output/model_capture2D2.png)
 * **(10 Points)** - Add a 2D visualization to AnyLogic for Part 3.
 I did not implement a holding area in my 2D model.  Individuals in the model move directly from queue to queue.  Based on my airport experience, this is realistic at the check in and TSA lines.  Unfortunately, it is becoming more common for boarding as well.
 
