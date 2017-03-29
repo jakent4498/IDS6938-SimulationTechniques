@@ -3,12 +3,11 @@
 ## IDS6938-Simulation Techniques - [University of Central Florida](http://www.ist.ucf.edu/grad/)
 
 [University of Central Florida](http://www.ist.ucf.edu/grad/)
-This is the framework for homework #2. 
+Julie A Kent
 
 The assignment is due: **Tuesday, March 28 at 11:59PM (EST)**
 
-asdfasdf
-sadfsad
+I will be taking 1 late day and turning this in on Wednesday, March 29th.  I will have two late days to use on the final project.
 
 
 # Introduction
