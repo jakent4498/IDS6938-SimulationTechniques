@@ -119,15 +119,21 @@ Thankfully the Eigen website [https://eigen.tuxfamily.org/dox/group__TutorialMat
 
 Also many thanks to [http://www.ilanman.io/the-data-game/2015/9/26/markovchain](http://www.ilanman.io/the-data-game/2015/9/26/markovchain) for a wonderful explaination of what is going on with the Markov chains.  He even included a link to Python source code.
 * **(a) Null State Game transition matrix - 10pts:** The *null state game* is defined by a game with no snakes and no ladders. 
-Ran the null game initially with a 12x12 matrix and then with a full board.  For the Markov Chain the probabilities make an interesting heatmap.  
-![](SnakesAndLadders/output/HeatmapforNullmatrix.png)  The minimatrix was easier to see so I'll include it here just for reference ![](SnakesAndLadders/output/Heatmapforminimatrix.png)  So the disbursement of the yellow indicating likely landing places is a more obvious pattern in the larger matrix, but it is clearly present even in the minimatrix.  It is interesting how it fades as the first possibility of winning appears.
+
 * **(b) Simulate and analyze the results of Null State Game - 10pts:** What is the modal number of moves required by a single player to finish the game? We will be simulating the game two different ways. **(1) Markov Chain**: The game can be analyzed with a row vector, *v* with 101 components, representing the probabilities that the player is on each of the positions. V(0) is (1,0,0,...,0) since we know we start at square 0. v evolves by: <BR>![](images/prob.png?raw=true)<BR>
 For this part (1) use the *Markov project* in the Snake and Ladders starter code.<BR>
-**(2) Monte Carlo**: Use a monte carlo process to solve our Discrete Time Markov Chains. Here (2) use the DTMC project, and utilize the DTMC method similar to what we did in class. 
+
+Ran the null game initially with a 12x12 matrix and then with a full board.  For the Markov Chain the probabilities make an interesting heatmap.  
+![](SnakesAndLadders/output/HeatmapforNullmatrix.png)  The minimatrix was easier to see so I'll include it here just for reference ![](SnakesAndLadders/output/Heatmapforminimatrix.png)  So the disbursement of the yellow indicating likely landing places is a more obvious pattern in the larger matrix, but it is clearly present even in the minimatrix.  It is interesting how it fades as the first possibility of winning appears.
+
+**(2) Monte Carlo**: Use a monte carlo process to solve our Discrete Time Markov Chains. Here (2) use the DTMC project, and utilize the DTMC method similar to what we did in class. <BR>
+
 I added error checking using the absolute value of the difference between the sum of the probabilities for the row and 1 because the floating point numbers do not total exactly to one.  I checked for the difference being larger than 0.0000001.  Then I ran the null matrix using DTMC.  I saved all the resulting vectors to a file along with the number of rolls required to reach 100.  Creating a histogram for the number of rolls to reach 100 gives ![](SnakesAndLadders/output/NumberofRollsforNullGame.png)
+<BR>
+I created a heatmap for the Monte Carlos results with a null matrix.![](SnakesAndLadders/output/HeatmapDTMCNull.png) As the player moves along the board the color changes from green to yellow to orange and then fades once the game is won.<BR>
 * **(c) Simulate and analyze the results of Snakes and Ladders -10pts:**  
 Initially I just added ladders. The ladders only game requires fewer rolls to win.![](SnakesAndLadders/output/LaddersRollstoWin.png)  The histogram for ladders only shifts to the left compared to the null game.  Adding Snakes should shift it back to the right as shown by the actual results in the histogram. ![](SnakesAndLadders/output/HistogramBoth.png)
-Adding snakes to the ladders provides a wider range on the number of rols to win including a number of games that had not finished in 100 rolls.  For completeness, there is also a view of rolls to win for Snakes only. ![](SnakesAndLadders/output/SO2Win.png) In this case clearly many games did not finish after 100 rolls.
+Adding snakes to the ladders provides a wider range on the number of rols to win including a number of games that had not finished in 100 rolls.  For completeness, there is also a view of rolls to win for Snakes only. ![](SnakesAndLadders/output/SO2Win.png) In this case clearly many games did not finish after 100 rolls.  The heatmap of the Snakes Only game looks like ![](SnakesAndLadders/output/SO_Heatmap1.png)
 
 The Markov Analysis for the Snakes only game gives the following heatmap ![](SnakesAndLadders/output/MarkovHeatmapSO.png)  This is a much wider dispursion than the Ladders only game shown below.![](SnakesAndLadders/output/MarkovHeatmapLO.png) Finally the Snakes and Ladders heatmap is ![](SnakesAndLadders/output/MarkovHeatmapSL.png)  The green verticals in each of these diagrams represents the start of a snake or the start of a ladder as these are spaces where players will not land at the end of a turn.
 
@@ -181,6 +187,7 @@ You have to implement two features from this list for Part 4. You may choose any
 
 
 * **(10 Points)** - Provide code in (Python, R, Matlab...) that demonstrates an animation of the board itself evolving overtime for Snakes in Ladder for part 2. 
+I wanted to try to automate this, but I have run out of time.  I did provide the heatmaps.   There are several additional heatmaps and the R code to generate them.
 
 * **(10 Points)** - Add a 2D visualization to AnyLogic for Part 3.
 Implemented for Part 4 above.   Additional picture shown here. ![](queues/output/model_capture2D.png)
