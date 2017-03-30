@@ -195,7 +195,6 @@ Implemented for Part 4 above.   Additional picture shown here. ![](queues/output
 I also did a 3D model in AnyLogic.  Below are two pictures of the 3D model.
 ![](queues/output/model_capture3D1.PNG)
 ![](queues/output/model_capture3D2.PNG)
-* **(5 Points)** - Pick a research problem (from your dissertation, Energy Microgrids, Missle Defence...). Compare and contrast different software packages (AnyLogic, Simio, Simulu8, Arena etc). Convince me as your "manager/advisor" what advantages, weaknesses, and costs each program has. Come to a conclusion. 
-* Roughly sketch out how you would formulate the problem in the framework.
-I have a Word document with a writeup describing a choice of product for another project I am working.
+* **(5 Points)** - Pick a research problem (from your dissertation, Energy Microgrids, Missle Defence...). Compare and contrast different software packages (AnyLogic, Simio, Simulu8, Arena etc). Convince me as your "manager/advisor" what advantages, weaknesses, and costs each program has. Come to a conclusion. Roughly sketch out how you would formulate the problem in the framework. <BR>
+I have a Word document with a writeup describing a choice of product for another project I am working. It is in the Homework2/queues/output/ folder.  The file name is Product Comparison.docx.
 [](http://github.com/jakent4498/IDS6938-SimulationTechniques/blob/master/Homework2/queues/output/Product%20Comparison.docx?raw=true)
