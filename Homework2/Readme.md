@@ -13,12 +13,8 @@ I will be taking 1 late day and turning this in on Wednesday, March 29th.  I wil
 # Introduction
 A Discrete-event Model simulates a complex system as an ordered sequence of well-defined events. Mathematically Discrete-event models use Markov Processes, Queuing systems, events, probability / statistics, and random variables. The purpose of this assignment is to learn the mathematical foundations, how to program these models, and how to simulate them. The assignment is due Tuesday, March 28, 2017 at 11:59 P.M.
 
-Major parts for the Assignment
-You can think of the assignment broken up to 4 major parts:
-* Empirical Tests of Randomness
-* Snakes and Ladders (Discrete Event Markov Chains and Monte Carlo Simulations)
-* Discrete Event Simulation - Queue Simulation
-* Composing a final report
+
+[TOC]
 
 The goal of this assignment is to become familiar with the concepts in the second third of the class. You will be expected to compose a *final report* which demonstrates your understanding on the material in each section of the assignment. Be visual! - Pictures say a thousand words so you do not have to. Show off your different configurations and really explore the assignment.
 
@@ -26,16 +22,86 @@ The goal of this assignment is to become familiar with the concepts in the secon
 ##Part 0 - Getting Started
 Read the assignment. Sync your fork with the [main IDS6938 repository](https://github.com/hepcatjk/IDS6938-SimulationTechniques). Use CMake to create project files for the Homework 2 assignment (*Hint: and Discrete Lecture folders*). Set your *startup project* to the correct project. Test building and executing the homework 2 project. Look over and understand the framework and find the functions you need to edit for the assignment.
 
-
+Files and results are in both the Homework 2 folder and in Discrete 2.
 
 ##Part 1: Empirical Tests of Randomness (20 pts).
 We looked at different ways to generate [pseudo-random numbers](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) and [quasi random numbers](https://en.wikipedia.org/wiki/Low-discrepancy_sequence). Generating random numbers are crucial to Discrete-Event simulations which rely on random variables and stochastic processes. This problem explores different random number generators, distributions, and statistics. Different [C++ pseudo-random numbers engines are instantiated](http://www.cplusplus.com/reference/random/) already for you. Also a a wide variety of standard distributions are implemented. Two quasi random number generators are also provided.
-* **(a) - 3pts:** Output the results of five different random number engines, using a uniform distribution for values between [0-100]. Generate useful charts and statistics from the output to analyze how uniform these values truly are. You are expected to look at some advanced statistics and test, for example: tests like the Kolmogorov-Smirnov test, Chi-square test, Autocorrelation test, and Spearman’s Rank Correlation Coefficient are a few examples of ones your could use.)
+* **(a) - 3pts:** Output the results of five different random number engines, using a uniform distribution for values between [0-100]. 
+Generated results for 5 different engeines: knuth_b, minstd_rand, mt19937_64, ranlux48 and sobol.  A chart showing the results is given.
+![](../Discrete2/Graphs/Scatterplot as read from files.png)
+The end points have about half as many entries as the other values because the random numbers are generated on an interval between 0 and 1.  They are then scaled to integers for the interval from 0 to 100.  For all integer values inside the interval the real numbers below and above the integer will round to the integer.  For example, values from 0.50000 to 1.49999 will round to 1.  However, there are no values below 0 so only values from 0.00001 to 0.49999 round to 0, about half as many as would round to any interior digit.  The same is true at the other end of the scale.  There are no values above 100 so only values from 99.50000 to 100.00000 will round to 100.  This means the end points have about half as many entries as any of the interior values.  This is more obvious in the improved image below. ![](../Discrete2/Graphs/Five Method of Generating Uniform Distributions.png)
+With the number of values generated equal to 100,000 and the values ranging from 0 to 100, the expectation is that each value would appear about 1,000 times. these methods generally meet that expectation.
 * **(b) - 2pts:**  Vary *N* (amount of samples). How do things change.
+If the number of samples is smaller, say N=10000, the distribution spreads a little more, but the graph still appears uniform as shown below ![](../Discrete2/Graphs/Uniform with N=10000.png)
+On the other hand if N becomes larger, for example N=1,000,000, then the distribution appears even closer to uniform.  This is shown in the tight grouping of the graph below.![](../Discrete2/Graphs/Uniform with N=1000000.png)
+
+To more accurately compare the differences from the values of N, apply a chi-squared test to the raw data as opposed to the count of each number as shown on the graphs above.  For the Uniform Distribution across these three values of N, chi-squared results are shown below.
+> > chisq.unif.test(knuth1[,1],interval=c(0,100))
+
+	Discrete uniform(0,100) chi-squared test
+
+data:  knuth1[, 1]
+X-squared = 17.116, df = 19, a = 0, b = 100, p-value = 0.582
+
+> chisq.unif.test(knuth2[,1],interval=c(0,100))
+
+	Discrete uniform(0,100) chi-squared test
+
+data:  knuth2[, 1]
+X-squared = 27.359, df = 19, a = 0, b = 100, p-value = 0.09657
+
+> chisq.unif.test(knuth3[,1],interval=c(0,100))
+
+	Discrete uniform(0,100) chi-squared test
+
+data:  knuth3[, 1]
+X-squared = 15.952, df = 19, a = 0, b = 100, p-value = 0.6605
+
+> chisq.unif.test(knuth1[,1],interval=c(1,99))
+
+	Discrete uniform(1,99) chi-squared test
+
+data:  knuth1[, 1]
+X-squared = 42.912, df = 19, a = 1, b = 99, p-value = 0.001333
+
+> chisq.unif.test(knuth2[,1],interval=c(1,99))
+
+	Discrete uniform(1,99) chi-squared test
+
+data:  knuth2[, 1]
+X-squared = 348.48, df = 19, a = 1, b = 99, p-value < 2.2e-16
+
+> chisq.unif.test(knuth3[,1],interval=c(1,99))
+
+	Discrete uniform(1,99) chi-squared test
+
+data:  knuth3[, 1]
+X-squared = 3855.2, df = 19, a = 1, b = 99, p-value < 2.2e-16
+As shown, when the end points are included the generated distribution deviates from the uniform distribution when compared using a chi-squared test.  However, if the end points are omitted and the sampled data is compared from 1 to 99 then the chi-squared test shows the good fit with the uniform distribution which was expected.
+
 * **(c) - 3pts:** Fix a random engine of your choice from part (a), and now vary five different [distributions](http://www.cplusplus.com/reference/random/) for just the psedo-random numbers. Again, analyze your results with graphs and statistics of choice.
+First the Normal distribution.
+![](../Discrete2/Graphs/Normal with N=100000.png)
+Then the Poisson distribution (used for arrivals in M/M/1 queues )
+![](../Discrete2/Graphs/PoissonWithMultipleEngines.png)
+Next use Lognormal distribution
+![](../Discrete2/Graphs/LognormalMultipleEngines.png)
+Followed by the Exponential distribution (used in Part 3 for the airport queues).  This graph was challenging because all the points were so close together I had to adjust the sizes so they could all be seen.
+![](../Discrete2/Graphs/ExponentialMultipleEngines.png)
+Finally the Chi-Squared distribution so I can see what it looks like.
+![](../Discrete2/Graphs/ChiSquaredMultipleEngines.png)
 * **(d)- 4pts:** Generate random numbers in two-dimensions for a unit square. Plot the results for the different random number engines. The vertical axis should vary N in increasing order. The horizontal axis should show of the random number engines.
+This is shown below on one diagram.  I have tried unsucessfully to implement the multidimensional version of sobol.  Currently, even using different seeds the results are correlated resulting in a graph that appears like footprints.
+![](../Discrete2/Graphs/2x2 Uniform distribution varying N and Engine.png)
 * **(e)- 4pts:** Generate random numbers in two-dimensions for a unit square. Plot the results for the different distributions. The vertical axis should vary N in increasing order. The horizontal axis should show of the random number engines. (See [Random Numbers Webcourse page](https://webcourses.ucf.edu/courses/1246518/pages/random-numbers?module_item_id=10541423) for a rough idea what you should produce.)
+So I did not see the recommended values for N until after I had generated these graphs.  I think the different distributions is very interesting.
+![](../Discrete2/Graphs/2D Distribution Comparison.png)
+Since these are raw results, to look at a smaller set of data, I can just truncate the data in R.
 * **(f)- 4pts:** Repeat parts (d) and (e) with a unit circle.
+Repeating with Unit Circle
+![](../Discrete2/Graphs/UnitCircleMultiEngine.png)
+That gives a more interesting graphic and I can feel my computer breathing a sigh of relief at having less data in memory. ![](../Discrete2/Graphs/LighterUnitCircle.png)
+Last but not least is the unit circles with the different distributions. ![](../Discrete2/Graphs/Plots on Unit Circle.png)
 
 ##Part 2 - Snakes and Ladders (Discrete Event Markov Chains and Monte Carlo Simulations) (30 pts)
 

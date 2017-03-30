@@ -5,7 +5,7 @@
 library(ggplot2)
 # Read data from files
 jak1 <- read.table("results_knuth_b-uniformN100000.txt", header = FALSE)
-jak2 <- read.table("results_minstd_rand-uniformN100000.txt")
+jak2 <- read.table("results_minstd_rand-uniformN100000.txt", header = FALSE)
 jak3 <- read.table("results_mt19937_64-uniformN100000.txt", header = FALSE)
 jak4 <- read.table("results_ranlux48-uniformN100000.txt", header = FALSE)  
 jak5 <- read.table("histogram_sobol-resultsN100000.txt", header=FALSE)
@@ -23,7 +23,7 @@ scale_color_manual(name="Generation Method",
 # Repeat for other values of N
 # Read files for N=10,000
 jak1 <- read.table("results_knuth_b-uniformN10000.txt", header = FALSE)
-jak2 <- read.table("results_minstd_rand-uniformN10000.txt")
+jak2 <- read.table("results_minstd_rand-uniformN10000.txt", header = FALSE)
 jak3 <- read.table("results_mt19937_64-uniformN10000.txt", header = FALSE)
 jak4 <- read.table("results_ranlux48-uniformN10000.txt", header = FALSE)  
 jak5 <- read.table("histogram_sobol-resultsN10000.txt", header=FALSE)
@@ -40,7 +40,7 @@ ggplot(jak5, aes(ymin=0)) + labs(x="Number", y="Count",title="Uniform Distributi
   theme(legend.position = c(.6,.5),legend.justification = c(1,1))
 # Read files for N=1,000,000
 jak1 <- read.table("results_knuth_b-uniformN1000000.txt", header = FALSE)
-jak2 <- read.table("results_minstd_rand-uniformN1000000.txt")
+jak2 <- read.table("results_minstd_rand-uniformN1000000.txt", header = FALSE)
 jak3 <- read.table("results_mt19937_64-uniformN1000000.txt", header = FALSE)
 jak4 <- read.table("results_ranlux48-uniformN1000000.txt", header = FALSE)  
 jak5 <- read.table("histogram_sobol-resultsN1000000.txt", header=FALSE)
