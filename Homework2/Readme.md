@@ -30,7 +30,7 @@ The end points have about half as many entries as the other values because the r
 With the number of values generated equal to 100,000 and the values ranging from 0 to 100, the expectation is that each value would appear about 1,000 times. these methods generally meet that expectation.
 * **(b) - 2pts:**  Vary *N* (amount of samples). How do things change.
 If the number of samples is smaller, say N=10000, the distribution spreads a little more, but the graph still appears uniform as shown below ![](../Discrete2/Graphs/UniformN=10000.png)
-On the other hand if N becomes larger, for example N=1,000,000, then the distribution appears even closer to uniform.  This is shown in the tight grouping of the graph below.![](../Discrete2/Graphs/Uniform with N=1000000.png)
+On the other hand if N becomes larger, for example N=1,000,000, then the distribution appears even closer to uniform.  This is shown in the tight grouping of the graph below.![](../Discrete2/Graphs/UniformN=1000000.png)
 
 To more accurately compare the differences from the values of N, apply a chi-squared test to the raw data as opposed to the count of each number as shown on the graphs above.  For the Uniform Distribution across these three values of N, chi-squared results are shown below.
 > > chisq.unif.test(knuth1[,1],interval=c(0,100))
@@ -78,7 +78,7 @@ As shown, when the end points are included the generated distribution deviates f
 
 * **(c) - 3pts:** Fix a random engine of your choice from part (a), and now vary five different [distributions](http://www.cplusplus.com/reference/random/) for just the psedo-random numbers. Again, analyze your results with graphs and statistics of choice.
 First the Normal distribution.
-![](../Discrete2/Graphs/Normal with N=100000.png)
+![](../Discrete2/Graphs/NormalN=100000.png)
 Then the Poisson distribution (used for arrivals in M/M/1 queues )
 ![](../Discrete2/Graphs/PoissonWithMultipleEngines.png)
 Next use Lognormal distribution
@@ -89,18 +89,20 @@ Finally the Chi-Squared distribution so I can see what it looks like.
 ![](../Discrete2/Graphs/ChiSquaredMultipleEngines.png)
 * **(d)- 4pts:** Generate random numbers in two-dimensions for a unit square. Plot the results for the different random number engines. The vertical axis should vary N in increasing order. The horizontal axis should show of the random number engines.
 This is shown below on one diagram.  I have tried unsucessfully to implement the multidimensional version of sobol.  Currently, even using different seeds the results are correlated resulting in a graph that appears like footprints.
-![](../Discrete2/Graphs/2x2 Uniform distribution varying N and Engine.png)
-* **(e)- 4pts:** Generate random numbers in two-dimensions for a unit square. Plot the results for the different distributions. The vertical axis should vary N in increasing order. The horizontal axis should show of the random number engines. (See [Random Numbers Webcourse page](https://webcourses.ucf.edu/courses/1246518/pages/random-numbers?module_item_id=10541423) for a rough idea what you should produce.)
+![](../Discrete2/Graphs/2x2Uniform.png)
+* **(e)- 4pts:** Generate random numbers in two-dimensions for a unit square. Plot the results for the different distributions. The vertical axis should vary N in increasing order. The horizontal axis should show of the random number engines. 
 So I did not see the recommended values for N until after I had generated these graphs.  I think the different distributions is very interesting.
-![](../Discrete2/Graphs/2D Distribution Comparison.png)
-Since these are raw results, to look at a smaller set of data, I can just truncate the data in R.
+![](../Discrete2/Graphs/2DDistributionComparison.png)
+
 * **(f)- 4pts:** Repeat parts (d) and (e) with a unit circle.
 Repeating with Unit Circle
 ![](../Discrete2/Graphs/UnitCircleMultiEngine.png)
-That gives a more interesting graphic and I can feel my computer breathing a sigh of relief at having less data in memory. ![](../Discrete2/Graphs/LighterUnitCircle.png)
-Last but not least is the unit circles with the different distributions. ![](../Discrete2/Graphs/Plots on Unit Circle.png)
 
-##Part 2 - Snakes and Ladders (Discrete Event Markov Chains and Monte Carlo Simulations) (30 pts)
+Since these are raw results, to look at a smaller set of data, I can just truncate the data in R.  That gives a more interesting graphic and I can feel my computer breathing a sigh of relief at having less data in memory. ![](../Discrete2/Graphs/LighterUnitCircle.png)
+
+Last but not least is the unit circles with the different distributions. ![](../Discrete2/Graphs/PlotsonUnitCircle.png)
+
+## Part 2 - Snakes and Ladders (Discrete Event Markov Chains and Monte Carlo Simulations) (30 pts)
 
 We all love board games. A board game can be viewed mathematically as a Markov chain, where the probability of moving to the next position depends only on the position you are currently at and the chances provided by tossing a dice. For this part of the homework we will simulate the game "*Snakes and Ladders*" (This goes by other names: Chutes and Ladders, Moksha Patam but all essentially the same gameplay.)
 
@@ -113,33 +115,24 @@ The classic game has 100 positions on the board. You toss one die, and move squa
 
 The game is **memoryless** - your progression to the next position is independent of how you arrived there (opposed to Blackjack or Candyland where your progression is based on what cards have been drawn). A Markov Chain defines the probability of a move from state *i* to state *j* by a **Transition Matrix**, *T*. So in the case of *Snakes and Ladders* the dimensions of a transition matrix is 101x101.
 
-* **(a) Null State Game transition matrix - 10pts:** The *null state game* is defined by a game with no snakes and no ladders. This simplifies the game to just the moves of the two dice rolls. Create the transition matrix for the null state game. The Transition Matrix would be decided by the roll of a fair, six-sided die, so it would start to look like:
-<BR>![](images/null.png?raw=true)<BR>
-From state 0 it is equally probable of landing on squares 1-6. From state 1 t is equally probable of landing on squares 2-7, and so on. Create this transition matrix. The end is trickier, we will consider any roll past 100 a win case. (Opposed to rolling exactly onto square 100.) Confirm you have a well formed stochastic matrix (Write checks for confirming each row of T sums to one and all elements are non-negative). The Transition Matrix methods can be found in the TransitionMatrix.h file.
+Thankfully the Eigen website [https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html](https://eigen.tuxfamily.org/dox/group__TutorialMatrixArithmetic.html) had a good explaination of multiplying Eigen vectors and Eigen matrices.  
 
+Also many thanks to [http://www.ilanman.io/the-data-game/2015/9/26/markovchain](http://www.ilanman.io/the-data-game/2015/9/26/markovchain) for a wonderful explaination of what is going on with the Markov chains.  He even included a link to Python source code.
+* **(a) Null State Game transition matrix - 10pts:** The *null state game* is defined by a game with no snakes and no ladders. 
+Ran the null game initially with a 12x12 matrix and then with a full board.  For the Markov Chain the probabilities make an interesting heatmap.  
+![](SnakesAndLadders/output/HeatmapforNullmatrix.png)  The minimatrix was easier to see so I'll include it here just for reference ![](SnakesAndLadders/output/Heatmapforminimatrix.png)  So the disbursement of the yellow indicating likely landing places is a more obvious pattern in the larger matrix, but it is clearly present even in the minimatrix.  It is interesting how it fades as the first possibility of winning appears.
 * **(b) Simulate and analyze the results of Null State Game - 10pts:** What is the modal number of moves required by a single player to finish the game? We will be simulating the game two different ways. **(1) Markov Chain**: The game can be analyzed with a row vector, *v* with 101 components, representing the probabilities that the player is on each of the positions. V(0) is (1,0,0,...,0) since we know we start at square 0. v evolves by: <BR>![](images/prob.png?raw=true)<BR>
 For this part (1) use the *Markov project* in the Snake and Ladders starter code.<BR>
-**(2) Monte Carlo**: he will will use a monte carlo process to solve our Discrete Time Markov Chains. Here (2) use the DTMC project, and utilize the DTMC method similar to what we did in class. <BR><BR>Produce graphs to analyze the results and show how the game evolves over time for both methods. Plot useful statistics of the results such as percentage chance of finishing the game in n-moves, cumulative probability of finishing the game in n-moves, and other ways to convey useful information of the results.
+**(2) Monte Carlo**: Use a monte carlo process to solve our Discrete Time Markov Chains. Here (2) use the DTMC project, and utilize the DTMC method similar to what we did in class. 
+I added error checking using the absolute value of the difference between the sum of the probabilities for the row and 1 because the floating point numbers do not total exactly to one.  I checked for the difference being larger than 0.0000001.  Then I ran the null matrix using DTMC.  I saved all the resulting vectors to a file along with the number of rolls required to reach 100.  Creating a histogram for the number of rolls to reach 100 gives ![](SnakesAndLadders/output/NumberofRollsforNullGame.png)
+* **(c) Simulate and analyze the results of Snakes and Ladders -10pts:**  
+Initially I just added ladders. The ladders only game requires fewer rolls to win.![](SnakesAndLadders/output/LaddersRollstoWin.png)  The histogram for ladders only shifts to the left compared to the null game.  Adding Snakes should shift it back to the right as shown by the actual results in the histogram. ![](SnakesAndLadders/output/HistogramBoth.png)
+Adding snakes to the ladders provides a wider range on the number of rols to win including a number of games that had not finished in 100 rolls.  For completeness, there is also a view of rolls to win for Snakes only. ![](SnakesAndLadders/output/SO2Win.png) In this case clearly many games did not finish after 100 rolls.
 
-* **(c) Simulate and analyze the results of Snakes and Ladders -10pts:**  Construct a new transition matrix based on the table:
-
-
-Ladders From  | Ladders To | |  Snakes From  | Snakes To 
--------- | -------- | ------------- | -------- | -------- 
-3|19| |11|7
-15|37| |18|13
-22|42| |28|12
-25|64| |36|34
-41|73| |77|16
-53|74| |47|26
-63|86| |83|39
-76|91| |92|75
-84|98| |99|70
+The Markov Analysis for the Snakes only game gives the following heatmap ![](SnakesAndLadders/output/MarkovHeatmapSO.png)  This is a much wider dispursion than the Ladders only game shown below.![](SnakesAndLadders/output/MarkovHeatmapLO.png) Finally the Snakes and Ladders heatmap is ![](SnakesAndLadders/output/MarkovHeatmapSL.png)  The green verticals in each of these diagrams represents the start of a snake or the start of a ladder as these are spaces where players will not land at the end of a turn.
 
 
-
-Run the same simulation and analyze your results similar to part (b) for the proper game of *Snakes and Ladders* for both methods. How often are the snakes and ladders used, how do the probability of finishing change, etc? What is the maximum and expected amount of moves for the game? Use charts and graphs to illustrate these points.
-* **(d) Think - 0pts:** If these games are built entirely on chance, do they require any strategy? Is it really a *game*, would you rather play games of chance or games of strategy?
+* **(d) Think - 0pts:** Games are a structured form of play.  Therefore, Snakes and Ladders can easily be considered game.  It has structure and generally at least one player enjoys it even if that player is not the parent.  Games do not necessarily need to involve skill or intelligence.
 
 
 ##Part 3 - Discrete Event Simulation - Queue Simulation (30 pts)
