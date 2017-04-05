@@ -8,7 +8,7 @@
 
 #ifdef _DEBUG
 #undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
+static char THIS_FILE[] = __FILE__;
 #define new DEBUG_NEW
 #endif
 
@@ -227,16 +227,16 @@ void SIMAgent::InitValues()
 	SIMAgent::KNoise, SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgent::RNeighborhood,
 	SIMAgent::KSeparate, SIMAgent::KAlign, SIMAgent::KCohesion.
 	*********************************************/
-	Kv0 = 0.0;
-	Kp1 = 0.0;
-	Kv1 = 0.0;
-	KArrival = 0.0;
-	KDeparture = 0.0;
-	KNoise = 0.0;
+	Kv0 = 0.5;
+	Kp1 = 1.0;
+	Kv1 = 3.0;
+	KArrival = 1.0;
+	KDeparture = 5.0;
+	KNoise = 3.0;
 	KWander = 0.0;
 	KAvoid = 0.0;
 	TAvoid = 0.0;
-	RNeighborhood = 0.0;
+	RNeighborhood = 6.0;
 	KSeparate = 0.0;
 	KAlign = 0.0;
 	KCohesion = 0.0;
@@ -292,8 +292,16 @@ vec2 SIMAgent::Seek()
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
+	float thetad;
 
-	return tmp;
+	tmp = goal - GPos;
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+
+	float vn = SIMAgent::MaxVelocity;
+
+	return vec2(cos(thetad)*vn, sin(thetad)*vn);
+	//return tmp;
 }
 
 /*
@@ -310,8 +318,17 @@ vec2 SIMAgent::Flee()
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
+	float thetad;
 
-	return tmp;
+	tmp = goal - GPos;
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+	thetad = thetad*M_PI;
+
+	float vn = SIMAgent::MaxVelocity;
+
+	return vec2(cos(thetad)*vn, sin(thetad)*vn);
+	//return tmp;
 }
 
 /*
