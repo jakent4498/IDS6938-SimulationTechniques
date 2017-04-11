@@ -169,12 +169,19 @@ public:
 	static float KCohesion;	
 };
 
-inline void Truncate(float& value, float minV, float maxV){
+inline void Truncate(float& value, float minV, float maxV) {
 	if (value < minV)
 		value = minV;
 	else
 		if (value > maxV)
 			value = maxV;
+}
+inline void Clamp(float& value, float minA, float maxA) {
+	if (value < minA)
+		value = minA;
+	else
+		if (value > maxA)
+			value = maxA;
 }
 #endif // !defined(AGENT_H)
 

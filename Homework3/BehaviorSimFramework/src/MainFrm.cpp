@@ -42,10 +42,9 @@ static UINT indicators[] =
 CMainFrame::CMainFrame()
 {
 	// TODO: add member initialization code here
-	CSimulation mySIM;
-
-	
-	mySIM.CreateAgents(3);
+//	CSimulation mySIM;
+		
+//	mySIM.CreateAgents(3);
 
 	SplitterReady = false;
 }

@@ -227,19 +227,20 @@ void SIMAgent::InitValues()
 	SIMAgent::KNoise, SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgent::RNeighborhood,
 	SIMAgent::KSeparate, SIMAgent::KAlign, SIMAgent::KCohesion.
 	*********************************************/
-	Kv0 = 0.5;
-	Kp1 = 1.0;
-	Kv1 = 3.0;
-	KArrival = 1.0;
-	KDeparture = 5.0;
+	Kv0 = 9.0;
+	Kp1 = 200.0;
+	Kv1 = 32.0;
+	KArrival = 0.01;
+	KDeparture = 5000.0;
 	KNoise = 3.0;
-	KWander = 0.0;
-	KAvoid = 0.0;
-	TAvoid = 0.0;
-	RNeighborhood = 6.0;
-	KSeparate = 0.0;
-	KAlign = 0.0;
-	KCohesion = 0.0;
+	KWander = 8.0;
+	KAvoid = 2.0;
+	TAvoid = 20.0;
+	RNeighborhood = 600.0;
+	KSeparate = 600.0;
+	KAlign = 20.0;
+	KCohesion = 0.05;
+
 }
 
 /*
@@ -250,19 +251,46 @@ void SIMAgent::Control()
 	/*********************************************
 	// TODO: Add code here
 	*********************************************/
+	Truncate(vd, -SIMAgent::MaxVelocity, SIMAgent::MaxVelocity);
+	input[0] = SIMAgent::Mass * SIMAgent::Kv0 * (vd - state[2]);
+	Truncate(input[0], -SIMAgent::MaxForce, SIMAgent::MaxForce);
+
+	double dangle = AngleDiff(state[1], thetad);
+	input[1] = SIMAgent::Inertia * (Kp1 * dangle - Kv1 * state[3]);
+	Truncate(input[1], -SIMAgent::MaxTorque, SIMAgent::MaxTorque);
 
 }
-
 /*
 *	Compute derivative vector given input and state vectors
 *  This function sets derive vector to appropriate values after being called
 */
 void SIMAgent::FindDeriv()
 {
+
 	/*********************************************
 	// TODO: Add code here
 	*********************************************/
-
+	//State vector dimension: 4
+	/*
+	*	State Vector: 4 dimensions
+	*  0 : position in local coordinates. Useless.
+	*  1 : orientation angle in global coordinates.
+	*  2 : velocity in local coordinates.
+	*  3 : angular velocity in global coordinates.
+	*/
+	/*
+	*	Input Vector: 2 dimensions
+	*  0 : force
+	*  1 : torque
+	*/
+	deriv[0] = state[2];
+	deriv[1] = state[3];
+	deriv[2] = input[0] / Mass;
+	deriv[3] = input[1] / Inertia;
+	/*for (int i = 0; i < dimState; i++) {
+		deriv[i] += deriv[i] * deltaT;
+	}
+	*/
 }
 
 /*
@@ -271,12 +299,30 @@ void SIMAgent::FindDeriv()
 *  Perform validation check to make sure all values are within MAX values
 */
 void SIMAgent::UpdateState()
+// Added from piazza 4/8/17
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
+
+	for (int i = 0; i < dimState; i++) {
+		state[i] += deriv[i] * deltaT;
+	}
+	state[0] = 0.0;
+
+//	Clamp(state[1], -M_PI, M_PI);
+	ClampAngle(state[1]);
+	Truncate(state[2], -SIMAgent::MaxVelocity, SIMAgent::MaxVelocity);
+
+	vec2 GVelocity;
+	GVelocity[0] = state[2] * cos(state[1]);
+	GVelocity[1] = state[2] * sin(state[1]);
+	GPos += GVelocity;
+
+	Truncate(GPos[0], -1.0 * env->groundSize, env->groundSize);
+	Truncate(GPos[1], -1.0 * env->groundSize, env->groundSize);
+
+	Truncate(state[3], -SIMAgent::MaxAngVel, SIMAgent::MaxAngVel);
 
 }
+
 
 /*
 *	Seek behavior
@@ -291,16 +337,29 @@ vec2 SIMAgent::Seek()
 	/*********************************************
 	// TODO: Add code here
 	*********************************************/
+	//State vector dimension: 4
+	/*
+	*	State Vector: 4 dimensions
+	*  0 : position in local coordinates. Useless.
+	*  1 : orientation angle in global coordinates.
+	*  2 : velocity in local coordinates.
+	*  3 : angular velocity in global coordinates.
+	*/
 	vec2 tmp;
-	float thetad;
+//	float thetad;
 
 	tmp = goal - GPos;
-	tmp.Normalize();
+//	tmp.Normalize();
+//	tmp = WorldToLocal(tmp);
+//	tmp = LocalToWorld(tmp);
 	thetad = atan2(tmp[1], tmp[0]);
 
-	float vn = SIMAgent::MaxVelocity;
 
-	return vec2(cos(thetad)*vn, sin(thetad)*vn);
+	float vn = SIMAgent::MaxVelocity;
+//	vd = SIMAgent::MaxVelocity;
+	
+	return LocalToWorld(vec2(cos(thetad)*vn, sin(thetad)*vn));
+//	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	//return tmp;
 }
 
@@ -318,10 +377,11 @@ vec2 SIMAgent::Flee()
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
-	float thetad;
+//	float thetad;
 
 	tmp = goal - GPos;
 	tmp.Normalize();
+//	tmp = WorldToLocal(tmp);
 	thetad = atan2(tmp[1], tmp[0]);
 	thetad = thetad*M_PI;
 
@@ -347,6 +407,20 @@ vec2 SIMAgent::Arrival()
 	*********************************************/
 	vec2 tmp;
 
+	tmp = goal - GPos;
+	if (tmp.Length() > 0) {
+		thetad = state[1] + atan2(tmp[1], tmp[0]);
+		vd = SIMAgent::MaxVelocity*tmp.SqrLength();
+		return vec2(cos(thetad)*vd, sin(thetad)*vd);
+	}
+	else
+		return tmp;
+	//tmp = WorldToLocal(tmp);
+	//thetad = state[1] + atan2(tmp[1], tmp[0]);
+
+	//vec2 Arrive = KArrival*tmp;
+	//vd = sqrt(Arrive[0] * Arrive[0] + Arrive[1] * Arrive[1]);
+	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	return tmp;
 }
 
