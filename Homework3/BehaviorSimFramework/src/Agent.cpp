@@ -227,11 +227,11 @@ void SIMAgent::InitValues()
 	SIMAgent::KNoise, SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgent::RNeighborhood,
 	SIMAgent::KSeparate, SIMAgent::KAlign, SIMAgent::KCohesion.
 	*********************************************/
-	Kv0 = 9.0;
-	Kp1 = 200.0;
-	Kv1 = 32.0;
-	KArrival = 0.01;
-	KDeparture = 5000.0;
+	Kv0 = 5.0;
+	Kp1 = -400.0;
+	Kv1 = 15.0;
+	KArrival = 0.1;
+	KDeparture = 50.0;
 	KNoise = 3.0;
 	KWander = 8.0;
 	KAvoid = 2.0;
@@ -307,7 +307,10 @@ void SIMAgent::UpdateState()
 	}
 	state[0] = 0.0;
 
-//	Clamp(state[1], -M_PI, M_PI);
+	// JAK 4/15/17 Seek seems to work except if the goal is too far behind the agent
+	// Try changing Clamp to ClampAngle to see if this resolves
+	// Using ClampAngle appears to resolve that issue
+   // Clamp(state[1], -M_PI, M_PI);
 	ClampAngle(state[1]);
 	Truncate(state[2], -SIMAgent::MaxVelocity, SIMAgent::MaxVelocity);
 
@@ -334,9 +337,6 @@ void SIMAgent::UpdateState()
 */
 vec2 SIMAgent::Seek()
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
 	//State vector dimension: 4
 	/*
 	*	State Vector: 4 dimensions
@@ -346,21 +346,14 @@ vec2 SIMAgent::Seek()
 	*  3 : angular velocity in global coordinates.
 	*/
 	vec2 tmp;
-//	float thetad;
 
 	tmp = goal - GPos;
-//	tmp.Normalize();
-//	tmp = WorldToLocal(tmp);
-//	tmp = LocalToWorld(tmp);
+	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
 
-
-	float vn = SIMAgent::MaxVelocity;
-//	vd = SIMAgent::MaxVelocity;
+	vd = SIMAgent::MaxVelocity/2;
 	
-	return LocalToWorld(vec2(cos(thetad)*vn, sin(thetad)*vn));
-//	return vec2(cos(thetad)*vd, sin(thetad)*vd);
-	//return tmp;
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 }
 
 /*
@@ -373,21 +366,21 @@ vec2 SIMAgent::Seek()
 */
 vec2 SIMAgent::Flee()
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
 	vec2 tmp;
-//	float thetad;
 
-	tmp = goal - GPos;
+	// JAK code added 4/10/17
+	tmp = env->goal - GPos;
 	tmp.Normalize();
-//	tmp = WorldToLocal(tmp);
 	thetad = atan2(tmp[1], tmp[0]);
 	thetad = thetad*M_PI;
+	// JAK 4/15/17 tried M_PI/2 and the agent starts to flee and then comes back
 
-	float vn = SIMAgent::MaxVelocity;
+	//float vn = SIMAgent::MaxVelocity;
+	// Setting vd to MaxVelocity when fleeing
+	vd = SIMAgent::MaxVelocity;
+	//vd = 4.0;
 
-	return vec2(cos(thetad)*vn, sin(thetad)*vn);
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	//return tmp;
 }
 
@@ -408,8 +401,9 @@ vec2 SIMAgent::Arrival()
 	vec2 tmp;
 
 	tmp = goal - GPos;
-	if (tmp.Length() > 0) {
+	if (tmp.Length() > KArrival) {
 		thetad = state[1] + atan2(tmp[1], tmp[0]);
+		ClampAngle(thetad);
 		vd = SIMAgent::MaxVelocity*tmp.SqrLength();
 		return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	}
@@ -421,7 +415,7 @@ vec2 SIMAgent::Arrival()
 	//vec2 Arrive = KArrival*tmp;
 	//vd = sqrt(Arrive[0] * Arrive[0] + Arrive[1] * Arrive[1]);
 	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
-	return tmp;
+//	return tmp;
 }
 
 /*
@@ -439,8 +433,18 @@ vec2 SIMAgent::Departure()
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
+	tmp = goal - GPos;
+	if (tmp.Length() > KDeparture) {
+		thetad = atan2(tmp[1], tmp[0]);
+		thetad = thetad*M_PI;
+		Clamp(thetad, -M_PI, M_PI);
+		vd = SIMAgent::MaxVelocity*tmp.SqrLength();
+		return vec2(cos(thetad)*vd, sin(thetad)*vd);
+	}
+	else
+		return tmp;
 
-	return tmp;
+//	return tmp;
 }
 
 /*

@@ -184,6 +184,7 @@ void CPanel::OnRadioSeek()
 {
 	// TODO: Add your control notification handler code here
 	sim->type = SEEK;
+	
 }
 
 void CPanel::OnRadioWander() 

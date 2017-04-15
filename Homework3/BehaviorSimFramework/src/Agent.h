@@ -182,6 +182,10 @@ inline void Clamp(float& value, float minA, float maxA) {
 	else
 		if (value > maxA)
 			value = maxA;
+	//while (value > maxA)
+	//	value -= abs(maxA);
+	//while (value < minA)
+	//	value += abs(minA);
 }
 #endif // !defined(AGENT_H)
 
