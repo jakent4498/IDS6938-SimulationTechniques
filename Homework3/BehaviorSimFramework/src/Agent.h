@@ -14,6 +14,9 @@
 #include "AgentDisplay.h"
 #include "Environment.h"
 #include <vector>
+#include <random>
+#include <functional> 
+
 
 using namespace std;
 

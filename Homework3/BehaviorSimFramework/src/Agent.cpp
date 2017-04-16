@@ -220,18 +220,18 @@ Sets the intial Values
 void SIMAgent::InitValues()
 {
 	/*********************************************
-	// TODO: Add code here
+	// TODO: JAK 4/15/17 added
 	Set initial value for control and behavior settings
 	You need to find out appropriate values for:
 	SIMAgent::Kv0, SIMAgent::Kp1, SIMAgent::Kv1, SIMAgent::KArrival, SIMAgent::KDeparture,
 	SIMAgent::KNoise, SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgent::RNeighborhood,
 	SIMAgent::KSeparate, SIMAgent::KAlign, SIMAgent::KCohesion.
 	*********************************************/
-	Kv0 = 5.0;
-	Kp1 = -400.0;
-	Kv1 = 15.0;
-	KArrival = 0.1;
-	KDeparture = 50.0;
+	Kv0 = 10.0;			// velocity
+	Kp1 = -400.0;		// Everything worked better when I made this negative - controls the direction the agent faces
+	Kv1 = 20.0;			// Angular momentum 
+	KArrival = 0.02;	// Multiplied by the distance from the goal and MaxVelocity to get arrival velocity
+	KDeparture = 1500.0;	// Maximum distance to get away when departing
 	KNoise = 3.0;
 	KWander = 8.0;
 	KAvoid = 2.0;
@@ -372,13 +372,11 @@ vec2 SIMAgent::Flee()
 	tmp = env->goal - GPos;
 	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
-	thetad = thetad*M_PI;
+	thetad = thetad+M_PI;
 	// JAK 4/15/17 tried M_PI/2 and the agent starts to flee and then comes back
+	// JAK 4/15/17 one might think I could recognize the difference between + and * by now, one would be wrong
 
-	//float vn = SIMAgent::MaxVelocity;
-	// Setting vd to MaxVelocity when fleeing
 	vd = SIMAgent::MaxVelocity;
-	//vd = 4.0;
 
 	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	//return tmp;
@@ -395,27 +393,18 @@ vec2 SIMAgent::Flee()
 */
 vec2 SIMAgent::Arrival()
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
+	// JAK 4/15/17 Added code based on webcourses	
 	vec2 tmp;
-
 	tmp = goal - GPos;
-	if (tmp.Length() > KArrival) {
-		thetad = state[1] + atan2(tmp[1], tmp[0]);
-		ClampAngle(thetad);
-		vd = SIMAgent::MaxVelocity*tmp.SqrLength();
-		return vec2(cos(thetad)*vd, sin(thetad)*vd);
-	}
-	else
-		return tmp;
-	//tmp = WorldToLocal(tmp);
-	//thetad = state[1] + atan2(tmp[1], tmp[0]);
+	//vd = SIMAgent::MaxVelocity / 2;
+	vd = tmp.Length() * KArrival;
+	Truncate(vd, 0, SIMAgent::MaxVelocity);
 
-	//vec2 Arrive = KArrival*tmp;
-	//vd = sqrt(Arrive[0] * Arrive[0] + Arrive[1] * Arrive[1]);
-	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
-//	return tmp;
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
+
 }
 
 /*
@@ -429,20 +418,20 @@ vec2 SIMAgent::Arrival()
 */
 vec2 SIMAgent::Departure()
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
 	vec2 tmp;
+
 	tmp = goal - GPos;
-	if (tmp.Length() > KDeparture) {
-		thetad = atan2(tmp[1], tmp[0]);
-		thetad = thetad*M_PI;
-		Clamp(thetad, -M_PI, M_PI);
-		vd = SIMAgent::MaxVelocity*tmp.SqrLength();
-		return vec2(cos(thetad)*vd, sin(thetad)*vd);
-	}
-	else
-		return tmp;
+	// JAK 4/15/17 Departure radius minus Distance from goal should be big when close to goal and shrink when closer to departure radius
+	// if tmp.Length() is larger than departure radius vd should be negative and get truncated to 0
+	vd = (KDeparture - tmp.Length()) * KArrival;
+	Truncate(vd, 0, SIMAgent::MaxVelocity);
+
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+	thetad = thetad + M_PI;
+
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
+
 
 //	return tmp;
 }
@@ -458,12 +447,21 @@ vec2 SIMAgent::Departure()
 */
 vec2 SIMAgent::Wander()
 {
-	/*********************************************
-	// TODO: Add code here
-	*********************************************/
-	vec2 tmp;
+	// Implement random engine for Wander based on Homework 2
+	std::random_device rd;
+	std::ranlux48 engine(rd());
+	std::uniform_real_distribution<> dist(0, 360);
+	auto genAngle = std::bind(dist, engine);
 
-	return tmp;
+	// JAK 4/15/17 Started with code from seek
+	// Yet, another way to implement this is to pick a random angle 
+	// multiply some random noise (Knoise) to the x and y directions of the velocity, 
+	// and multiply a damping term (KWander).
+	thetad = genAngle();
+	//vd = (v0[0] * KNoise + v0[1] * KNoise)*KWander;
+	vd = SIMAgent::MaxVelocity / 2;
+
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 }
 
 /*
@@ -478,13 +476,46 @@ vec2 SIMAgent::Wander()
 *  Store them into vd and thetad respectively
 *  return a vec2 that represents the goal velocity with its direction being thetad and its norm being vd
 */
+
 vec2 SIMAgent::Avoid()
 {
 	/*********************************************
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
-	
+	vec2 ahead1;
+	vec2 ahead2;
+
+	// ahead = position + normalize(velocity) * MAX_SEE_AHEAD
+	// ahead2 = position + normalize(velocity) * MAX_SEE_AHEAD * 0.5
+	ahead1 = GPos + v0.Normalize() * KAvoid;
+	ahead2 = GPos + v0.Normalize() * KAvoid * 0.5;
+	for (int i=0; i < env->obstaclesNum; i++) {
+		//private function distance(a :Object, b : Object) :Number{
+		//	return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+		//}
+		vec2 obs;
+		obs[0] = env->obstacles[i][0];
+		obs[1] = env->obstacles[i][1];
+
+		float dist1 = (obs - ahead1).Length();
+		float dist2 = (obs - ahead2).Length();
+		
+
+		//private function lineIntersectsCircle(ahead :Vector3D, ahead2 : Vector3D, obstacle : Circle) :Boolean{
+		//	// the property "center" of the obstacle is a Vector3D.
+		//	return distance(obstacle.center, ahead) <= obstacle.radius || distance(obstacle.center, ahead2) <= obstacle.radius;
+		//}
+		if (dist1 <= obs.Length() || dist2 <= obs.Length()) {
+			// need to avoid the obstacle
+			thetad = thetad + M_PI / 2;
+			vd = 2.0;
+			return vec2(cos(thetad)*vd, sin(thetad)*vd);
+		}
+		
+	}
+
+
 	return tmp;
 }
 
