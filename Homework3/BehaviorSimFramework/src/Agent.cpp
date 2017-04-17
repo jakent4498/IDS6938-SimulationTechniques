@@ -236,8 +236,8 @@ void SIMAgent::InitValues()
 	KWander = 8.0;
 	KAvoid = 2.0;
 	TAvoid = 20.0;
-	RNeighborhood = 600.0;
-	KSeparate = 600.0;
+	RNeighborhood = 500.0;
+	KSeparate = 6.0;
 	KAlign = 20.0;
 	KCohesion = 0.05;
 
@@ -514,8 +514,43 @@ vec2 SIMAgent::Avoid()
 		}
 		
 	}
+	// JAK 4/15/17 this is not done, but it is closer
+	// from https://gamedevelopment.tutsplus.com/tutorials/understanding-steering-behaviors-collision-avoidance--gamedev-7777
+	//private function collisionAvoidance() :Vector3D{
+	//	ahead = ...; // calculate the ahead vector
+	//ahead2 = ...; // calculate the ahead2 vector
 
+	//var mostThreatening : Obstacle = findMostThreateningObstacle();
+	//var avoidance : Vector3D = new Vector3D(0, 0, 0);
 
+	//if (mostThreatening != null) {
+	//	avoidance.x = ahead.x - mostThreatening.center.x;
+	//	avoidance.y = ahead.y - mostThreatening.center.y;
+
+	//	avoidance.normalize();
+	//	avoidance.scaleBy(MAX_AVOID_FORCE);
+	//}
+	//else {
+	//	avoidance.scaleBy(0); // nullify the avoidance force
+	//}
+
+	//return avoidance;
+	//}
+
+	//	private function findMostThreateningObstacle() :Obstacle{
+	//	var mostThreatening : Obstacle = null;
+
+	//for (var i : int = 0; i < Game.instance.obstacles.length; i++) {
+	//	var obstacle : Obstacle = Game.instance.obstacles[i];
+	//	var collision : Boolean = lineIntersecsCircle(ahead, ahead2, obstacle);
+
+	//	// "position" is the character's current position
+	//	if (collision && (mostThreatening == null || distance(position, obstacle) < distance(position, mostThreatening))) {
+	//		mostThreatening = obstacle;
+	//	}
+	//}
+	//return mostThreatening;
+	//}
 	return tmp;
 }
 
@@ -533,6 +568,15 @@ vec2 SIMAgent::Separation()
 	// TODO: Add code here
 	*********************************************/
 	vec2 tmp;
+	//SIMAgent other;
+
+	//for (int i=0; i< SIMAgent::agents.size(); i++) {
+	//	if (SIMAgent::agents[i] != this) {
+	//		if ((SIMAgent::agents[i]->v0 - v0) < RNeighborhood)
+	//	}
+	//		
+	//}
+
 
 	return tmp;
 }
