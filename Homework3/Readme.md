@@ -56,6 +56,8 @@ SIMAgent::KNoise,	SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgen
 * Departure - implemented - from goal flee at max velocity slow to 0 at departure radisu
 * Wander - sort of implemented - chose a random angle and go that way, haven't figured out the Knoise
 * Obstacle Avoidance - sort of implemented - will veer away from objects, was this also supposed to seek the goal?
+Found some help on this topic from
+https://gamedevelopment.tutsplus.com/tutorials/understanding-steering-behaviors-collision-avoidance--gamedev-7777
 
 **(c) - 20 points**: Implement the functions for the following group behaviors: 
 * Seperation
@@ -63,7 +65,7 @@ SIMAgent::KNoise,	SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgen
 * Alignment 
 * Flocking
 * Leader Following
-
+There is code for Seperation, Cohesion, Alignment, Flocking and Leader Following.  The code is based on the descriptions written in webcourses.
 # Part 2 - Simulating a simple pedestrian flow
 
 The goal of this part of the assigment is to simulate the pedestrain flow for various configurations. Pedestrian traffic simulation is an important, sometimes required, stage for certain construction projects such as shopping centers, airports, railway stations, or stadiums. hese analyses can be used by architects in the design stage, by facilities owners contemplating changes, by city planners to evaluate rush hours, or even by civil authorities to simulate evacuations or other emergencies. 
@@ -74,7 +76,7 @@ The goal of this part of the assigment is to simulate the pedestrain flow for va
 
 ![](images/density.png?raw=true)
 
-I did this and I created a 3D version.  I did not think all the pedestrians should look alike so I used CreateRandom to make a number of different subway riders.
+I did this and I created a 3D version.  I did not think all the pedestrians should look alike so I used CreateRandom to make a number of different subway riders.  More to the point for this homework, my different pedestrians have different movement rates so the heatmap changes a bit based on the flow of traffic.  This might have more of an effect in a model with less open space where slow pedestrians might block the way of faster pedestrians.
 My 2D image looks very similar to the one above 
 ![](images/subway2d.png)
 
@@ -84,12 +86,33 @@ In the 3D image you can see the variety of pedestrians.
 **(b) - 20 points**: Create a maze. Generate the pdm, stats, and animations like before. Vary [parameters in your agents](https://help.anylogic.com/index.jsp?topic=/com.xj.anylogic.help/html/_PL/reference/Attributes.html) to give them different behaviors and show the pedistrians change how they navigate the maze.
 I started with a simple maze and created the pdm.  Not sure what stats to capture.  I need to add pictures here.
 
-Initially all the pedestrians took one of two routes to the maze exit.  I added points in the dead ends and set those as destinations for a percentage of the population.  I also partially blocked one portion of the maze to see the change in the pdm.
+Initially all the pedestrians took one of two routes to the maze exit.  I added points in the dead ends and set those as destinations for a percentage of the population.  I also partially blocked one portion of the maze to see the change in the pdm.  I added a slider to change the rate at which pedestrians enter the maze.  
 
-AnyLogic asked me to upgrade to AnyLogic 8 which had a new Space Markup Object - Ped Flow Statistics.  I created two of these and connected them to a chart to get the traffic flow through the left and right sides of the maze.  See the screenshot at ![](images/maze2-inuse.png)
+AnyLogic asked me to upgrade to AnyLogic 8 which had a new Space Markup Object - Ped Flow Statistics.  I created two of these and connected them to a chart to get the traffic flow through the left and right sides of the maze.   ![](images/Maze2-inuse.png)
+
+
+I added a 3D model to the simulation.  I am not showing the outer wall because it was made as a rectangular wall so the 3D version looks like a brick.  However, I am showing the interior walls. In addition I took the obstacle from adding the round wall and had it display as a tree in the 3D version.  I made a trash barrel in one dead end and a monitor in the other so the wandering pedestrians might have some reason to go there.  These are in the 2D model, but really show up in the 3D version.  See the screenshot showing the monitor with a blue agent headed towards it
+![](images/Maze2-3D1.png)
+Then look at the other side to see the trash barrel.
+![](images/Maze2-3D2.png)
+Finally, we can compare the heatmap of pedestrian locations between Maze2 which includes sending agents to these two dead end with the same heatmap on Maze1 where the pedestrians are not directed to the deadends.
+![](images/Maze2-inuse2.png)
+![](images/Maze1.png)
 
 **(c) - 30 points**: Model and analyze a building (or floor/outdoor space/stadium) on campus. (There is help on piazza how to find rough building plans - we expect something plausible). Create a senario: evacuation, daily office routine, special event, normal egress.... etc., and model and design your own experiment to determine if the building design suits the needs of its users. Start with photographs of your site, describe your site, describe your senario and hypothesis. Then use an agent-based pedistrian simulation to visualize your experiment's results.
 
 I am working on the student union.  I may not get all the details as this is a complex space.  I would like to be able to model movement from the first floor to the second floor.  I also want to be able to model several different kinds of activities because many activities occur in this building.  
 
 The new release of AnyLogic said there was a sort of evacuation option.  I want to read more about that and try it.  I currently have folks coming in and going out different doors, waiting for food at Subway and getting print jobs.  There are clearly many different activities in the student union and there are already some areas with pedestrian traffic challenges.
+
+I have stairs and elevator working with people going to the second and the third floors.  Not all of my wait times are realistic, but I can show the challenge of many people trying to exit the ballroom.
+I need to work some statistics just in case I run out of time.  I'm enjoying building the model, but the statistics are needed for the assignment. Oh neat in my huge student union model, I can create a view just for statistics.  That makes it easier to find and read the chart.  I intend to add a second, but for now I have one that shows traffic flow through a line on each floor.  The first floor line shows the pedestrians cutting through the MASS store to get to another point.  The second floor shows the congested area between the elevator and the stairs.  The third floor just shows the number of people who went to the third floor.
+![](images/su-statistics1.png)
+The initial heatmap shows
+![](images/su-heatmap1.png)
+Then look at what happens when I end the event in the ballroom.
+![](images/su-heatmap2.png)
+A little while later
+![](images/su-heatmap3.png)
+Then the fire alarm is pressed and people stop comming into the building.  Everyone must exit by the stairwells not the elevator.
+![](images/su-heatmap4.png)

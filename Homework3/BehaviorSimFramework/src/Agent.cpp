@@ -351,7 +351,7 @@ vec2 SIMAgent::Seek()
 	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
 
-	vd = SIMAgent::MaxVelocity/2;
+	vd = SIMAgent::MaxVelocity;
 	
 	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 }
@@ -457,11 +457,20 @@ vec2 SIMAgent::Wander()
 	// Yet, another way to implement this is to pick a random angle 
 	// multiply some random noise (Knoise) to the x and y directions of the velocity, 
 	// and multiply a damping term (KWander).
-	thetad = genAngle();
+	thetad = genAngle() /180.0 * M_PI;
 	//vd = (v0[0] * KNoise + v0[1] * KNoise)*KWander;
 	vd = SIMAgent::MaxVelocity / 2;
 
-	return vec2(cos(thetad)*vd, sin(thetad)*vd);
+	// Using code from SIMAgent creation
+	//float angle = float(rand() % 360) / 180.0 * M_PI;
+	vWander[0] = cos(thetad) * SIMAgent::KWander;
+	vWander[1] = sin(thetad) * SIMAgent::KWander;
+	//angle = float(rand() % 360) / 180.0 * M_PI;
+	//v0[0] = cos(angle) * SIMAgent::MaxVelocity / 2.0;
+	//v0[1] = sin(angle) * SIMAgent::MaxVelocity / 2.0;
+
+
+	return vWander;
 }
 
 /*
@@ -488,7 +497,16 @@ vec2 SIMAgent::Avoid()
 
 	// ahead = position + normalize(velocity) * MAX_SEE_AHEAD
 	// ahead2 = position + normalize(velocity) * MAX_SEE_AHEAD * 0.5
-	ahead1 = GPos + v0.Normalize() * KAvoid;
+	ahead1 = GPos + v0.Normalize() * KAvoid;	
+
+	tmp = goal - GPos;
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+
+	vd = SIMAgent::MaxVelocity / 2;
+
+	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
+
 	ahead2 = GPos + v0.Normalize() * KAvoid * 0.5;
 	for (int i=0; i < env->obstaclesNum; i++) {
 		//private function distance(a :Object, b : Object) :Number{
@@ -509,11 +527,16 @@ vec2 SIMAgent::Avoid()
 		if (dist1 <= obs.Length() || dist2 <= obs.Length()) {
 			// need to avoid the obstacle
 			thetad = thetad + M_PI / 2;
-			vd = 2.0;
 			return vec2(cos(thetad)*vd, sin(thetad)*vd);
 		}
-		
 	}
+	tmp = goal - GPos;
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+
+	vd = SIMAgent::MaxVelocity / 2;
+
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 	// JAK 4/15/17 this is not done, but it is closer
 	// from https://gamedevelopment.tutsplus.com/tutorials/understanding-steering-behaviors-collision-avoidance--gamedev-7777
 	//private function collisionAvoidance() :Vector3D{
@@ -565,20 +588,18 @@ vec2 SIMAgent::Avoid()
 vec2 SIMAgent::Separation()
 {
 	/*********************************************
-	// TODO: Add code here
+	// \sum_{n \in N} Normalize (goal-position)
 	*********************************************/
 	vec2 tmp;
-	//SIMAgent other;
+	vec2 sumtmp (0.0, 0.0);
 
-	//for (int i=0; i< SIMAgent::agents.size(); i++) {
-	//	if (SIMAgent::agents[i] != this) {
-	//		if ((SIMAgent::agents[i]->v0 - v0) < RNeighborhood)
-	//	}
-	//		
-	//}
+	
+	for (int i=0; i< SIMAgent::agents.size(); i++) {
+		tmp = SIMAgent::agents[i]->GPos - GPos;
+		sumtmp += (tmp / tmp.Length()) * SIMAgent::KSeparate;
+	}
 
-
-	return tmp;
+	return sumtmp;
 }
 
 /*
@@ -592,11 +613,21 @@ vec2 SIMAgent::Separation()
 vec2 SIMAgent::Alignment()
 {
 	/*********************************************
-	// TODO: Add code here
+	// \sum_{n \in N} Normalize(n_v)
 	*********************************************/
-	vec2 tmp;
+	vec2 tmpseperation (0.0, 0.0);
+	vec2 tmp2;
+	SIMAgent* temp;
 
-	return tmp;
+
+	for (int i = 0; i < SIMAgent::agents.size(); i++) {
+		tmp2 = SIMAgent::agents[i]->GPos - GPos;
+		if (tmp2.Length() < SIMAgent::RNeighborhood)
+			//			tmp += SIMAgent::agents[i]->vd.Normalize();
+			tmpseperation = SIMAgent::agents[i]->v0.Normalize();
+	}
+
+	return tmpseperation*KAlign;
 }
 
 /*
@@ -610,12 +641,28 @@ vec2 SIMAgent::Alignment()
 vec2 SIMAgent::Cohesion()
 {
 	/*********************************************
-	// TODO: Add code here
+	// \frac{\sum_{n \in N} n_{pos}}{|N|}
+	//sum the position of all neighbors and then divide the position by the number of neighbors.
 	*********************************************/
 	vec2 tmp;
+	vec2 sumtmp(0.0, 0.0);
+	int num=0;
+
+	for (int i = 0; i< SIMAgent::agents.size(); i++) {
+		tmp = SIMAgent::agents[i]->GPos;
+		if (tmp.Length() < RNeighborhood) {
+			sumtmp += tmp;
+			num++;
+		}
+
+	}
+	
+	sumtmp = ((sumtmp / num) - GPos)*KCohesion;
+
+	return sumtmp;
 
 
-	return tmp;
+//	return tmp;
 }
 
 /*
@@ -628,11 +675,22 @@ vec2 SIMAgent::Cohesion()
 vec2 SIMAgent::Flocking()
 {
 	/*********************************************
-	// TODO: Add code here
+	// 4/21/17 V_{flock}= c_{seperate}V_{seperate}+c_{align}V_{align}+c_{cohesion}V_{cohesion}
+	// where V_{seperate}, V_{cohesion}, V_{align} Vseperate,Vcohesion,Valign are computed from the 
+	// separation, cohesion and alignment computation. c_{separate}cseparate, c_{cohesion}ccohesion 
+	// and c_{align}calign are constant coefficients
 	*********************************************/
 	vec2 tmp;
+	vec2 vflock;
 
-	return tmp;
+	//vflock = SIMAgent::KSeparate * SIMAgent::Separation() + SIMAgent::KAlign*SIMAgent::Alignment() + SIMAgent::KCohesion*SIMAgent::Cohesion();
+	vflock = SIMAgent::Separation() + SIMAgent::Alignment() + SIMAgent::Cohesion();
+
+	return vflock;
+	//vd = vflock.Length();
+	//thetad = atan2(vflock[1], vflock[0]);
+
+	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
 }
 
 /*
@@ -646,9 +704,17 @@ vec2 SIMAgent::Flocking()
 vec2 SIMAgent::Leader()
 {
 	/*********************************************
-	// TODO: Add code here
+	// V_{leaderfollow}=c_{seperate}V_{seperate}+c_{arrivial}V_{arrivial}
 	*********************************************/
 	vec2 tmp;
+
+	if (SIMAgent::agents[0] == this) {
+		return SIMAgent::Arrival();
+	}
+	//for (int i = 1; i< SIMAgent::agents.size(); i++) {
+	//	tmp = SIMAgent::agents[i]->GPos;
+	else
+		tmp = SIMAgent::KSeparate*Separation() + Arrival();
 
 	return tmp;
 }
