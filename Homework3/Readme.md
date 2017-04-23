@@ -116,3 +116,9 @@ A little while later
 ![](images/su-heatmap3.png)
 Then the fire alarm is pressed and people stop comming into the building.  Everyone must exit by the stairwells not the elevator.
 ![](images/su-heatmap4.png)
+Okay I implmented the choice of 5 different fast food options. I also added a waiting area in the food court for individuals eating there.  I made some variations in the different queues for the different fast food counters.  So I am adding a histogram to look at wait times from when a person enters the queue to when they exit.  The image below shows the first two queues whih both have uniform wait times, but the second queue has a longer recovery period between services.
+![](images/su-ffstats2.png)
+The bars are overlapping and it does not look like this will scale well to all five fast food options.  Should I try to add all five or shoul I play with chart options first? I don't see an obvious way to change the bins, but I did ad some labels and the queue for the fifth fast food counter which has a Poisson distribution for service time rather than a uniform distribution.  I am not certain the difference is obvious.
+![](images/su-stats3.png)
+The difference in the pedestrian traffic resulting from the fast food counters is obvious in the new heatmap.
+![](images/su-ffheatmap.png)
