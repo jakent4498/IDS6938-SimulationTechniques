@@ -239,7 +239,7 @@ void SIMAgent::InitValues()
 	RNeighborhood = 500.0;
 	KSeparate = 6.0;
 	KAlign = 20.0;
-	KCohesion = 0.05;
+	KCohesion = 1.0;
 
 }
 
@@ -595,12 +595,15 @@ vec2 SIMAgent::Separation()
 
 	
 	for (int i=0; i< SIMAgent::agents.size(); i++) {
-		tmp = SIMAgent::agents[i]->GPos - GPos;
+//		tmp = SIMAgent::agents[i]->GPos - GPos;
+		tmp = goal - SIMAgent::agents[i]->GPos;
 		sumtmp += (tmp / tmp.Length()) * SIMAgent::KSeparate;
 	}
-
-	return sumtmp;
-}
+//	return sumtmp;
+	thetad = atan2(sumtmp[1], sumtmp[0]);
+	vd = MaxVelocity / 2;
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
+} 
 
 /*
 *	Alignment behavior
@@ -615,19 +618,24 @@ vec2 SIMAgent::Alignment()
 	/*********************************************
 	// \sum_{n \in N} Normalize(n_v)
 	*********************************************/
-	vec2 tmpseperation (0.0, 0.0);
-	vec2 tmp2;
-	SIMAgent* temp;
-
-
+	vec2 tmpsum (0.0, 0.0);
+	vec2 tmp;
+	
 	for (int i = 0; i < SIMAgent::agents.size(); i++) {
-		tmp2 = SIMAgent::agents[i]->GPos - GPos;
-		if (tmp2.Length() < SIMAgent::RNeighborhood)
+		tmp = SIMAgent::agents[i]->GPos - GPos;
+		if (tmp.Length() < SIMAgent::RNeighborhood)
 			//			tmp += SIMAgent::agents[i]->vd.Normalize();
-			tmpseperation = SIMAgent::agents[i]->v0.Normalize();
+			tmpsum = SIMAgent::agents[i]->v0.Normalize();
 	}
-
-	return tmpseperation*KAlign;
+//	return tmpsum*KAlign;
+//	thetad = atan2(tmpsum[1], tmpsum[0]);
+//	tmp = goal - GPos;
+//	thetad = atan2(tmp[1] + tmpsum[1], tmp[0] + tmpsum[0]);
+	tmp = goal - GPos + tmpsum;
+	thetad = atan2(tmp[1], tmp[0]);
+	vd = tmp.Length() * KArrival;
+	Truncate(vd, 0, SIMAgent::MaxVelocity);
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 }
 
 /*
@@ -658,11 +666,19 @@ vec2 SIMAgent::Cohesion()
 	}
 	
 	sumtmp = ((sumtmp / num) - GPos)*KCohesion;
+//	return sumtmp;
 
-	return sumtmp;
+	tmp = goal - GPos + sumtmp;
+	vd = tmp.Length() * KArrival;
+	Truncate(vd, 0, SIMAgent::MaxVelocity);
+
+	tmp.Normalize();
+	thetad = atan2(tmp[1], tmp[0]);
+
+	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 
 
-//	return tmp;
+
 }
 
 /*
@@ -683,8 +699,8 @@ vec2 SIMAgent::Flocking()
 	vec2 tmp;
 	vec2 vflock;
 
-	//vflock = SIMAgent::KSeparate * SIMAgent::Separation() + SIMAgent::KAlign*SIMAgent::Alignment() + SIMAgent::KCohesion*SIMAgent::Cohesion();
-	vflock = SIMAgent::Separation() + SIMAgent::Alignment() + SIMAgent::Cohesion();
+	vflock = SIMAgent::KSeparate * SIMAgent::Separation() + SIMAgent::KAlign*SIMAgent::Alignment() + SIMAgent::KCohesion*SIMAgent::Cohesion();
+	//vflock = SIMAgent::Separation() + SIMAgent::Alignment() + SIMAgent::Cohesion();
 
 	return vflock;
 	//vd = vflock.Length();
