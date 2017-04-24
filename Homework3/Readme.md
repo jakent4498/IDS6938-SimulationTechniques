@@ -44,16 +44,40 @@ You will need to set deriv[0], deriv[1], deriv[2], deriv[3]. Compute derivative 
 * deriv[1] is the angular velocity of the agent in world coordinates
 * deriv[2] is the force in local body coordinates divided by the mass.
 * deriv[3] is the torque in local body coordinates divided by the inertia.
+The code looks like 
+```
+	deriv[0] = state[2];
+	deriv[1] = state[3];
+	deriv[2] = input[0] / Mass;
+	deriv[3] = input[1] / Inertia;
+
+```
 
 You also must implement *SIMAgent::InitValues()*: Try to figure out appropriate values for control and behavior settings. You need to find out appropriate values for: *SIMAgent::Kv0, SIMAgent::Kp1, SIMAgent::Kv1, SIMAgent::KArrival, SIMAgent::KDeparture,
 SIMAgent::KNoise,	SIMAgent::KWander, SIMAgent::KAvoid, SIMAgent::TAvoid, SIMAgent::RNeighborhood, SIMAgent::KSeparate, SIMAgent::KAlign, SIMAgent::KCohesion.*
+I keep changing the initial values, but currently I have
+```
+	Kv0 = 10.0;			// velocity
+	Kp1 = -400.0;		// Everything worked better when I made this negative - controls the direction the agent faces
+	Kv1 = 20.0;			// Angular momentum 
+	KArrival = 400.0;		// Get this close then stop or slow way down
+	KDeparture = 900.0;	// Maximum distance to get away when departing
+	KNoise = 3.0;
+	KWander = 8.0;
+	KAvoid = 400.0;
+	TAvoid = 0.60;
+	RNeighborhood = 200.0;
+	KSeparate = 1.0;
+	KAlign = 5.0;
+	KCohesion = 4.0;
 
+```
 
 **(b) - 20 points**: In this part of the assignment you will need to implement 6 types of individual behaviors and 5 types of group behaviors. Create the following behaviors through appropriate computation of V<sub> d</sub>  and θ<sub>d</sub>  commands:
 * Seek - implemented - seek velocity is 1/2 max velocity
 * Flee - implemented - flee at maximum velocity
-* Arrival - implemented - from far away use max velcity, slow to 0 at arrival
-* Departure - implemented - from goal flee at max velocity slow to 0 at departure radisu
+* Arrival - implemented - from far away use max velcity, slow to 0 at arrival I created a picture similar to the one given in the assignment ![](images/jak-arrive.png)
+* Departure - implemented - from goal flee at max velocity slow to 0 at departure radisu The departure radius is noticably further away than the arrival radius.  I have a different picture ![](images/jak-depart.png)
 * Wander - sort of implemented - chose a random angle and go that way, haven't figured out the Knoise
 * Obstacle Avoidance - sort of implemented - will veer away from objects, was this also supposed to seek the goal?
 Found some help on this topic from
@@ -63,8 +87,8 @@ https://gamedevelopment.tutsplus.com/tutorials/understanding-steering-behaviors-
 * Seperation
 * Cohesion 
 * Alignment 
-* Flocking
-* Leader Following
+* Flocking  I have a picture of flocking ![](images/jak-flock2.png)
+* Leader Following  I also have a picture of leader following ![](images/jak-leader.png)
 There is code for Seperation, Cohesion, Alignment, Flocking and Leader Following.  The code is based on the descriptions written in webcourses.
 # Part 2 - Simulating a simple pedestrian flow
 
@@ -122,3 +146,16 @@ The bars are overlapping and it does not look like this will scale well to all f
 ![](images/su-stats3.png)
 The difference in the pedestrian traffic resulting from the fast food counters is obvious in the new heatmap.
 ![](images/su-ffheatmap.png)
+n the 3D view it is easy to see the fast food queues forming.
+![](images/su-ff3D.png)
+The corresponding wait statistics at this point show
+![](images/su-ffstats4.png)
+When setting up the second and third floor, I created a new ground and set all the objects on that floor to use the new ground.  This eliminated people running outside the walls when the fire alarm was pressed.  The pedestrian traffic heatmap is currently associated with the first floor so the signature that shows in the stairwell is pedestrians coming up from the first floor.
+![](images/su-prefire.png)
+Immediately after the firealarm is pressed this changes to
+![](images/su-afterfire1.png)
+Finally all the pedestrians clear the buidling using only the stairwells because the elevators are disabled when the fire alarm is pressed.
+![](images/su-afterfire2.png)
+
+
+

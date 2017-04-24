@@ -4,7 +4,7 @@
 	         AnyLogic Project File 
 *************************************************	         
 -->
-<AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="7.3.7.201703161403" AlpVersion="7.3.3">
+<AnyLogicWorkspace WorkspaceVersion="1.9" AnyLogicVersion="8.0.5.201704071710" AlpVersion="8.0.4">
 <Model>
 	<Id>1491428698207</Id>
 	<Name><![CDATA[Subway Entrance Hall]]></Name>
@@ -3496,6 +3496,10 @@
 	<FixedTimeStep>0.001</FixedTimeStep>
 	<RelativeAccuracy>1.0E-5</RelativeAccuracy>
 	<TimeAccuracy>1.0E-5</TimeAccuracy>
+	<Frame>
+		<Width>1000</Width>
+		<Height>600</Height>
+	</Frame>
 	<Database>
 		<Logging>false</Logging>
 		<AutoExport>false</AutoExport>
@@ -3504,7 +3508,30 @@
 		<ExportSettings>
 			<ExportExcelFilePath><![CDATA[]]></ExportExcelFilePath>
 		</ExportSettings>
-	</Database>	
+	</Database>
+	
+	<RunConfiguration ActiveObjectClassId="1491428698212">
+		<Id>1492980715129</Id>
+		<Name><![CDATA[RunConfiguration]]></Name>
+		<ModelTimeProperties>
+			<StopOption><![CDATA[Stop at specified time]]></StopOption>
+			<InitialDate><![CDATA[1491350400000]]></InitialDate>	
+			<InitialTime><![CDATA[0.0]]></InitialTime>	
+			<FinalDate><![CDATA[1493942400000]]></FinalDate>	
+			<FinalTime><![CDATA[100.0]]></FinalTime>	
+		</ModelTimeProperties>
+		<AnimationProperties>
+			<StopNever>true</StopNever>
+			<ExecutionMode>realTimeScaled</ExecutionMode>
+			<RealTimeScale>1.0</RealTimeScale>
+			<EnableZoomAndPanning>true</EnableZoomAndPanning>
+			<Maximized>false</Maximized>
+		</AnimationProperties>
+		<Inputs>		
+		</Inputs>
+		<Outputs>
+		</Outputs>
+	</RunConfiguration>
 	<Experiments>	
 		<!--   =========   Simulation Experiment   ========  -->
 		<SimulationExperiment ActiveObjectClassId="1491428698212">
@@ -3513,14 +3540,6 @@
 			<ClientAreaTopLeft><X>0</X><Y>0</Y></ClientAreaTopLeft>
 			<PresentationTopGroupPersistent>true</PresentationTopGroupPersistent>
 			<IconTopGroupPersistent>true</IconTopGroupPersistent>
-			<Frame>
-				<X>0</X>
-				<Y>0</Y>
-				<Width>1000</Width>
-				<Height>600</Height>
-				<Maximized>false</Maximized>
-				<CloseConfirmation>false</CloseConfirmation>
-			</Frame>
 			<CommandLineArguments><![CDATA[]]></CommandLineArguments>
 			<MaximumMemory>256</MaximumMemory>
 			<RandomNumberGenerationType>fixedSeed</RandomNumberGenerationType>
@@ -3591,9 +3610,10 @@ getPresentation().setPresentable( getEngine().getRoot() );]]></ActionCode>
 				EnableAdaptiveFrameManagement="true" 
 				EnableAntiAliasing="true"
 				EnableEnhancedModelElementsAnimation="true"
-				EnablePanning="true"
-				ToolbarCustomizableAtRuntime="true"
-				EnableZoom="true">
+				ToolbarCustomizableAtRuntime="true">
+				<Maximized>false</Maximized>
+				<CloseConfirmation>false</CloseConfirmation>
+				<EnableZoomAndPanning>true</EnableZoomAndPanning>
 				<ExecutionMode><![CDATA[realTimeScaled]]></ExecutionMode>
 				<CpuRatio><![CDATA[ratio_1_2]]></CpuRatio>	        
 				<Title><![CDATA[Subway Entrance Hall : Simulation]]></Title>	

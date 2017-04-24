@@ -230,16 +230,16 @@ void SIMAgent::InitValues()
 	Kv0 = 10.0;			// velocity
 	Kp1 = -400.0;		// Everything worked better when I made this negative - controls the direction the agent faces
 	Kv1 = 20.0;			// Angular momentum 
-	KArrival = 0.02;	// Multiplied by the distance from the goal and MaxVelocity to get arrival velocity
-	KDeparture = 1500.0;	// Maximum distance to get away when departing
+	KArrival = 400.0;		// Get this close then stop or slow way down
+	KDeparture = 900.0;	// Maximum distance to get away when departing
 	KNoise = 3.0;
 	KWander = 8.0;
-	KAvoid = 2.0;
-	TAvoid = 20.0;
-	RNeighborhood = 500.0;
-	KSeparate = 6.0;
-	KAlign = 20.0;
-	KCohesion = 1.0;
+	KAvoid = 400.0;
+	TAvoid = 0.60;
+	RNeighborhood = 200.0;
+	KSeparate = 1.0;
+	KAlign = 5.0;
+	KCohesion = 4.0;
 
 }
 
@@ -396,13 +396,17 @@ vec2 SIMAgent::Arrival()
 	// JAK 4/15/17 Added code based on webcourses	
 	vec2 tmp;
 	tmp = goal - GPos;
-	//vd = SIMAgent::MaxVelocity / 2;
-	vd = tmp.Length() * KArrival;
-	Truncate(vd, 0, SIMAgent::MaxVelocity);
+	vd = tmp.Length() - KArrival;
 
 	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
 
+	if (vd <= KArrival) {
+		vd = 0;
+		return vec2(cos(thetad), sin(thetad));
+	}
+	vd = 0.1*vd;
+	Truncate(vd, 0, SIMAgent::MaxVelocity);
 	return vec2(cos(thetad)*vd, sin(thetad)*vd);
 
 }
@@ -422,9 +426,9 @@ vec2 SIMAgent::Departure()
 
 	tmp = goal - GPos;
 	// JAK 4/15/17 Departure radius minus Distance from goal should be big when close to goal and shrink when closer to departure radius
-	// if tmp.Length() is larger than departure radius vd should be negative and get truncated to 0
-	vd = (KDeparture - tmp.Length()) * KArrival;
-	Truncate(vd, 0, SIMAgent::MaxVelocity);
+	// if tmp.Length() is larger than departure radius vd should be negative and get truncated to 1
+	vd = (KDeparture - tmp.Length());
+	Truncate(vd, 1, SIMAgent::MaxVelocity);
 
 	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
@@ -495,86 +499,36 @@ vec2 SIMAgent::Avoid()
 	vec2 ahead1;
 	vec2 ahead2;
 
-	// ahead = position + normalize(velocity) * MAX_SEE_AHEAD
-	// ahead2 = position + normalize(velocity) * MAX_SEE_AHEAD * 0.5
-	ahead1 = GPos + v0.Normalize() * KAvoid;	
-
+	// Set where we want to go if there ar no obstacles
 	tmp = goal - GPos;
 	tmp.Normalize();
 	thetad = atan2(tmp[1], tmp[0]);
-
 	vd = SIMAgent::MaxVelocity / 2;
-
-	//return vec2(cos(thetad)*vd, sin(thetad)*vd);
-
+	// Look for obstacles
+	ahead1 = GPos + v0.Normalize() * KAvoid;
 	ahead2 = GPos + v0.Normalize() * KAvoid * 0.5;
 	for (int i=0; i < env->obstaclesNum; i++) {
-		//private function distance(a :Object, b : Object) :Number{
-		//	return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-		//}
 		vec2 obs;
 		obs[0] = env->obstacles[i][0];
 		obs[1] = env->obstacles[i][1];
 
 		float dist1 = (obs - ahead1).Length();
 		float dist2 = (obs - ahead2).Length();
-		
 
-		//private function lineIntersectsCircle(ahead :Vector3D, ahead2 : Vector3D, obstacle : Circle) :Boolean{
-		//	// the property "center" of the obstacle is a Vector3D.
-		//	return distance(obstacle.center, ahead) <= obstacle.radius || distance(obstacle.center, ahead2) <= obstacle.radius;
-		//}
-		if (dist1 <= obs.Length() || dist2 <= obs.Length()) {
-			// need to avoid the obstacle
-			thetad = thetad + M_PI / 2;
+		// Avoid obstacles that are in our path
+//		if (dist1 <= obs.Length() || dist2 <= obs.Length()) {
+		if (dist1 <= env->obstacles[i][2] + KAvoid || dist2 <= env->obstacles[i][2] + KAvoid) {
+//		if (dist1 <= env->obstacles[i][2] + KAvoid && dist2 <= env->obstacles[i][2] + KAvoid) {
+				// need to avoid the obstacle
+			thetad = thetad + TAvoid;
+			ClampAngle(thetad);
 			return vec2(cos(thetad)*vd, sin(thetad)*vd);
 		}
 	}
-	tmp = goal - GPos;
-	tmp.Normalize();
-	thetad = atan2(tmp[1], tmp[0]);
-
-	vd = SIMAgent::MaxVelocity / 2;
-
+	
 	return vec2(cos(thetad)*vd, sin(thetad)*vd);
-	// JAK 4/15/17 this is not done, but it is closer
-	// from https://gamedevelopment.tutsplus.com/tutorials/understanding-steering-behaviors-collision-avoidance--gamedev-7777
-	//private function collisionAvoidance() :Vector3D{
-	//	ahead = ...; // calculate the ahead vector
-	//ahead2 = ...; // calculate the ahead2 vector
 
-	//var mostThreatening : Obstacle = findMostThreateningObstacle();
-	//var avoidance : Vector3D = new Vector3D(0, 0, 0);
-
-	//if (mostThreatening != null) {
-	//	avoidance.x = ahead.x - mostThreatening.center.x;
-	//	avoidance.y = ahead.y - mostThreatening.center.y;
-
-	//	avoidance.normalize();
-	//	avoidance.scaleBy(MAX_AVOID_FORCE);
-	//}
-	//else {
-	//	avoidance.scaleBy(0); // nullify the avoidance force
-	//}
-
-	//return avoidance;
-	//}
-
-	//	private function findMostThreateningObstacle() :Obstacle{
-	//	var mostThreatening : Obstacle = null;
-
-	//for (var i : int = 0; i < Game.instance.obstacles.length; i++) {
-	//	var obstacle : Obstacle = Game.instance.obstacles[i];
-	//	var collision : Boolean = lineIntersecsCircle(ahead, ahead2, obstacle);
-
-	//	// "position" is the character's current position
-	//	if (collision && (mostThreatening == null || distance(position, obstacle) < distance(position, mostThreatening))) {
-	//		mostThreatening = obstacle;
-	//	}
-	//}
-	//return mostThreatening;
-	//}
-	return tmp;
+//	return tmp;
 }
 
 /*
@@ -591,13 +545,15 @@ vec2 SIMAgent::Separation()
 	// \sum_{n \in N} Normalize (goal-position)
 	*********************************************/
 	vec2 tmp;
-	vec2 sumtmp (0.0, 0.0);
+	vec2 sumtmp(0.0, 0.0);
 
 	
 	for (int i=0; i< SIMAgent::agents.size(); i++) {
-//		tmp = SIMAgent::agents[i]->GPos - GPos;
-		tmp = goal - SIMAgent::agents[i]->GPos;
-		sumtmp += (tmp / tmp.Length()) * SIMAgent::KSeparate;
+		tmp = SIMAgent::agents[i]->GPos - GPos;
+		if (tmp.Length() < SIMAgent::RNeighborhood) {
+			tmp = goal - SIMAgent::agents[i]->GPos;
+			sumtmp += (tmp / tmp.Length()) * SIMAgent::KSeparate;
+		}
 	}
 //	return sumtmp;
 	thetad = atan2(sumtmp[1], sumtmp[0]);
@@ -657,7 +613,7 @@ vec2 SIMAgent::Cohesion()
 	int num=0;
 
 	for (int i = 0; i< SIMAgent::agents.size(); i++) {
-		tmp = SIMAgent::agents[i]->GPos;
+		tmp = SIMAgent::agents[i]->GPos - GPos;
 		if (tmp.Length() < RNeighborhood) {
 			sumtmp += tmp;
 			num++;
@@ -665,8 +621,9 @@ vec2 SIMAgent::Cohesion()
 
 	}
 	
-	sumtmp = ((sumtmp / num) - GPos)*KCohesion;
-//	return sumtmp;
+	sumtmp = ((sumtmp / num) - GPos);
+	//sumtmp = ((sumtmp / num) - GPos)*KCohesion;
+	//	return sumtmp;
 
 	tmp = goal - GPos + sumtmp;
 	vd = tmp.Length() * KArrival;
@@ -725,12 +682,12 @@ vec2 SIMAgent::Leader()
 	vec2 tmp;
 
 	if (SIMAgent::agents[0] == this) {
-		return SIMAgent::Arrival();
+		return SIMAgent::Seek();
 	}
 	//for (int i = 1; i< SIMAgent::agents.size(); i++) {
 	//	tmp = SIMAgent::agents[i]->GPos;
 	else
-		tmp = SIMAgent::KSeparate*Separation() + Arrival();
+		tmp = SIMAgent::KSeparate*Separation() + KArrival*Arrival();
 
 	return tmp;
 }
